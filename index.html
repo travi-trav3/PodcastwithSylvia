@@ -52,12 +52,16 @@
   --s48:48px; --s64:64px; --s96:96px; --s128:128px; --s160:160px; --s200:200px;
 
   /* Vertical rhythm — deliberately varied, not uniform */
-  --pad-hero:  var(--s160);
-  --pad-std:   var(--s128);
-  --pad-tight: var(--s96);
+  --pad-hero:  120px;
+  --pad-std:   96px;
+  --pad-tight: 80px;
 
   /* Grid */
-  --container: 1240px;
+  /* Prose sections. 62ch of 18px body is ~558px, so the column is close to
+     full: the measure fills the container instead of hugging the left of a
+     1240px field with 600px of void beside it. */
+  --container: 720px;
+  --container-wide: 1180px;
   --gutter:    var(--s24);
   --margin:    var(--s32);
 
@@ -109,6 +113,9 @@ body{
   margin-inline:auto;
   padding-inline:var(--margin);
 }
+/* Multi-column modules only. Alternating narrow prose with wide grids is
+   itself the rhythm the page was missing. */
+.container--wide{max-width:var(--container-wide)}
 
 /* Full-bleed colour fills — two only, per the system */
 .fill-violet{background:var(--violet);color:#fff}
@@ -457,25 +464,25 @@ body{
    11. CREDIBILITY — violet full bleed, lime figures
    ========================================================================== */
 .receipts{margin-top:var(--s64);display:grid;gap:var(--s48)}
-@media (min-width:900px){.receipts{grid-template-columns:repeat(2,1fr);gap:var(--s48) var(--s64)}}
-.receipt{
-  border-top:1px solid rgba(255,255,255,.28);padding-top:var(--s24);
-  display:grid;grid-template-columns:auto minmax(0,1fr);
-  gap:var(--s24);align-items:start;
+@media (min-width:720px){.receipts{grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--s64) var(--s48)}}
+.receipt{border-top:1px solid rgba(255,255,255,.28);padding-top:var(--s24)}
+/* The figure leads, the claim follows, the detail supports. Previously the
+   claim was 40px lime and the figure did not exist, so the band read as a
+   neon wall rather than as evidence. */
+.receipt__delta{
+  font-family:var(--display);font-weight:800;
+  font-size:64px;line-height:.95;letter-spacing:-.03em;
+  color:var(--lime);font-variant-numeric:tabular-nums;
 }
 .receipt__fig{
-  /* lime spike 3 of 3 */
-  font-family:var(--display);font-weight:800;
-  font-size:40px;line-height:1.05;letter-spacing:-.02em;
-  color:var(--lime);
-  font-variant-numeric:tabular-nums;
+  font-family:var(--display);font-weight:600;
+  font-size:22px;line-height:1.25;letter-spacing:-.01em;
+  color:#fff;margin-top:var(--s12);
 }
-.receipt__body{margin-top:var(--s12);color:rgba(255,255,255,.82);max-width:52ch}
+.receipt__body{margin-top:var(--s12);color:rgba(255,255,255,.82);font-size:16px;line-height:1.6}
 .receipt--wide{grid-column:1/-1}
-@media (min-width:900px){.receipt--wide{grid-template-columns:190px minmax(0,1fr)}}
+@media (max-width:719px){.receipt__delta{font-size:48px}}
 
-/* Now sits on bone, not inside the violet fill, so it takes ink/slate. The
-   previous hardcoded white would have rendered invisible here. */
 .credmeta{
   margin-top:var(--s96);
   display:grid;gap:var(--s48);
@@ -608,7 +615,7 @@ body{
    16. FINAL CTA + FORM
    ========================================================================== */
 .final{display:grid;gap:var(--s64)}
-@media (min-width:980px){.final{grid-template-columns:minmax(0,1fr) minmax(0,460px);gap:var(--s96)}}
+@media (min-width:1040px){.final{grid-template-columns:minmax(0,1fr) minmax(0,440px);gap:var(--s64)}}
 .final .h-hero{font-size:72px}
 .final__copy p{color:var(--slate)}
 .final__actions{display:flex;flex-wrap:wrap;gap:var(--s16)}
@@ -767,7 +774,7 @@ body{
   margin-top:var(--s16);font-family:var(--display);font-weight:600;
   font-size:22px;line-height:1.3;letter-spacing:-.01em;color:var(--bone);
 }
-.fill-ink .show__role{color:rgba(248,244,238,.62);font-size:15px;margin-top:var(--s16)}
+.fill-ink .show__role{color:rgba(248,244,238,.78);font-size:16px;line-height:1.6;margin-top:var(--s16)}
 .work__also{margin-top:var(--s96)}
 
 /* Tier 2: visually subordinate to the two weekly shows. Titles are always
@@ -784,18 +791,20 @@ body{
 .trusted li:hover img,.trusted li:focus-within img{opacity:1}
 .trusted span{
   display:block;margin-top:var(--s12);
-  font-size:13px;line-height:1.35;color:rgba(248,244,238,.62);
+  font-size:13px;line-height:1.35;color:rgba(248,244,238,.78);
 }
 
 /* ==========================================================================
    CREDENTIALS RAIL — WO-09
    ========================================================================== */
+.creds{margin-top:var(--s96);border-top:1px solid rgba(255,255,255,.18);padding-top:var(--s48)}
+.creds .rail__foot{margin-top:var(--s32)}
 .rail{
-  margin-top:var(--s48);
-  display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:var(--s32);
+  margin-top:var(--s24);
+  display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:var(--s32) var(--s48);
 }
 .rail--training{
-  margin-top:var(--s64);padding-top:var(--s48);
+  margin-top:var(--s48);padding-top:var(--s32);
   border-top:1px solid rgba(255,255,255,.24);
   grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--s64);max-width:760px;
 }
@@ -803,9 +812,10 @@ body{
 .rail__badge{width:72px;height:72px;object-fit:contain;border-radius:8px;background:#fff;padding:4px}
 /* Type stands in wherever no official asset exists. Never a drawn lookalike. */
 .rail__type{
-  font-family:var(--display);font-weight:800;font-size:26px;line-height:1;
-  letter-spacing:-.02em;color:rgba(255,255,255,.7);height:72px;
-  display:flex;align-items:center;
+  font-family:var(--display);font-weight:800;font-size:22px;line-height:1;
+  letter-spacing:-.02em;color:var(--ink);height:72px;width:72px;
+  display:flex;align-items:center;justify-content:center;text-align:center;
+  background:rgba(255,255,255,.92);border-radius:12px;padding:8px;
 }
 .rail__type--lg{font-size:34px;height:96px;color:rgba(255,255,255,.78)}
 /* Multi-colour marks sit on a plate rather than being knocked out to white. */
@@ -834,6 +844,21 @@ body{
   .rail--training .rail__item{flex:0 0 220px}
   .rail:focus-visible{outline:2px solid #fff;outline-offset:4px}
 }
+
+/* ==========================================================================
+   TESTIMONIAL
+   ========================================================================== */
+.quote{
+  font-family:var(--display);font-weight:600;
+  font-size:26px;line-height:1.42;letter-spacing:-.01em;
+  color:var(--bone);margin:0;
+}
+.quote mark{background:none;color:var(--lime);font:inherit}
+.quote__by{margin-top:var(--s32);display:flex;align-items:center;gap:var(--s16)}
+.quote__by img{width:64px;height:64px;border-radius:50%;object-fit:cover;flex:0 0 auto}
+.quote__name{font-size:17px;font-weight:600;line-height:1.3;color:var(--bone)}
+.quote__title{font-size:15px;color:rgba(248,244,238,.7);line-height:1.4;margin-top:2px}
+@media (max-width:900px){.quote{font-size:21px;line-height:1.45}}
 
 /* ==========================================================================
    RECEIPT MARKS v2 — WO-07b
@@ -1090,69 +1115,6 @@ if ('IntersectionObserver' in window) {
 <div id="topbar-sentinel" aria-hidden="true"></div>
 
 <!-- ======================================================================
-     RECEIPT BADGE SPRITE
-     Drawn here rather than pulled from third-party brand assets. Where a
-     receipt carries real figures the mark plots those exact figures; where it
-     doesn't, it stays an icon rather than implying data that doesn't exist.
-     ====================================================================== -->
-<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs>
-
-  <!-- Completion 55% -> 85%: the low and high points are plotted true. -->
-  <symbol id="i-completion" viewBox="0 0 32 32">
-    <path class="st-dim" d="M2 30h28"/>
-    <path class="st" d="M4 15.4C10 15.4 12 5.4 28 5.4"/>
-    <circle class="fl-dim" cx="4" cy="15.4" r="2.6"/>
-    <circle class="fl" cx="28" cy="5.4" r="3"/>
-  </symbol>
-
-  <!-- Growth 29k -> 50k: bar heights are in true 29:50 ratio. -->
-  <symbol id="i-growth" viewBox="0 0 32 32">
-    <path class="st-dim" d="M2 30h28"/>
-    <rect class="fl-dim" x="5"  y="14.5" width="8" height="13.5" rx="1.5"/>
-    <rect class="fl"     x="19" y="4"    width="8" height="24"   rx="1.5"/>
-  </symbol>
-
-  <!-- Consumption 80%+: the arc sweeps a true 80% of the circle. -->
-  <symbol id="i-consumption" viewBox="0 0 32 32">
-    <circle class="st-dim" cx="16" cy="16" r="12"/>
-    <circle class="st" cx="16" cy="16" r="12"
-            stroke-dasharray="60.3 75.4" transform="rotate(-90 16 16)"/>
-    <circle class="fl" cx="16" cy="16" r="3.5"/>
-  </symbol>
-
-  <!-- Live show: a ticket stub. -->
-  <symbol id="i-tickets" viewBox="0 0 32 32">
-    <path class="st" d="M4 9h24v5a3 3 0 0 0 0 6v5H4v-5a3 3 0 0 0 0-6V9Z"/>
-    <path class="st-dim" d="M12 12v8M20 12v8" stroke-dasharray="2 3"/>
-  </symbol>
-
-  <!-- Apple Podcasts chart placement: a rank marker, not Apple's mark. -->
-  <symbol id="i-chart" viewBox="0 0 32 32">
-    <path class="st-dim" d="M2 30h28"/>
-    <rect class="fl" x="12.5" y="6" width="7" height="22" rx="1.5"/>
-    <rect class="fl-dim" x="2.5"  y="17" width="7" height="11" rx="1.5"/>
-    <rect class="fl-dim" x="22.5" y="20" width="7" height="8"  rx="1.5"/>
-    <path class="st" d="M16 2.5 17.6 5h-3.2L16 2.5Z"/>
-  </symbol>
-
-  <!-- Downloads: headphones plus a descending arrow. No fake trend line. -->
-  <symbol id="i-downloads" viewBox="0 0 32 32">
-    <path class="st" d="M5 20v-4a11 11 0 0 1 22 0v4"/>
-    <rect class="fl" x="2.5" y="19" width="6" height="10" rx="3"/>
-    <rect class="fl" x="23.5" y="19" width="6" height="10" rx="3"/>
-    <path class="st-dim" d="M16 9v7m0 0 3-3m-3 3-3-3"/>
-  </symbol>
-
-  <!-- Award: laurel wreath around a star. -->
-  <symbol id="i-award" viewBox="0 0 32 32">
-    <path class="st" d="M10 5a13 13 0 0 0 0 22"/>
-    <path class="st" d="M22 5a13 13 0 0 1 0 22"/>
-    <path class="fl" d="m16 10 2.1 4.3 4.7.7-3.4 3.3.8 4.7-4.2-2.2-4.2 2.2.8-4.7-3.4-3.3 4.7-.7L16 10Z"/>
-  </symbol>
-
-</defs></svg>
-
-<!-- ======================================================================
      1. HERO
      ====================================================================== -->
 <header class="section section--hero hero">
@@ -1161,7 +1123,7 @@ if ('IntersectionObserver' in window) {
     <path class="wave__b" d="M0,140 C160,100 300,180 460,140 C620,100 760,180 920,140 C1080,100 1240,180 1440,140"/>
   </svg>
 
-  <div class="container">
+  <div class="container container--wide">
     <h1 class="h-hero measure-h1" data-rise>Grow your show without turning it into something you don't <span class="mark">recognize</span>.</h1>
     <p class="lead" data-rise>You've already got listeners, a format that works, and a team that cares. I help podcasts like yours figure out what's actually working, fix what isn't, and grow on purpose instead of by accident.</p>
     <div class="cta-gap" data-rise>
@@ -1259,7 +1221,7 @@ if ('IntersectionObserver' in window) {
      4. SOLUTION — Problem and Solution were both bone at 128px, which breaks
      the no-adjacent-match rule. Rhythm table puts this at 112 / 64.
      ====================================================================== -->
-<section class="section" style="padding-block:112px">
+<section class="section" style="padding-block:104px">
   <div class="container">
     <p class="eyebrow" data-rise>What working together looks like</p>
     <h2 class="h2 measure-h2" data-rise>I've spent a decade in the tape and in the numbers.</h2>
@@ -1307,17 +1269,17 @@ if ('IntersectionObserver' in window) {
 </section>
 
 <!-- ======================================================================
-     TESTIMONIAL — WO-06
-     Sits on the bridge between the Promise (feeling) and the Receipts
-     (numbers): a human voice converts the first into the second, and
-     inoculates the reader before they start discounting unattributed stats.
-
-     TITLE_JENNY is a single constant so confirming the exact string is a
-     one-line change. NOT YET CONFIRMED with Jenny Barber.
+     TESTIMONIAL — on ink, not floating on bone. It was 30px type on the page
+     ground with no surface and 120px of air, so the only third-party voice on
+     the page read as more body copy. A dark full-bleed gives it the contrast
+     and definition it needs, and sits between the peach Promise and the
+     violet Receipts as a deliberate step down then up.
      ====================================================================== -->
-<section class="section" style="padding-block:120px">
-  <div class="container quote">
-    <blockquote data-rise>"Sylvia is a wildly talented producer and a natural leader. She's excellent at identifying where a show has opportunity for growth and coming up with a smart, strategic way forward. I've worked with her on multiple shows and she is always an asset to the team, <mark>one of my go-to people in the audio industry</mark>! If you want to elevate your audio content and grow your show, I highly recommend working with Sylvia."</blockquote>
+<section class="section section--tight fill-ink">
+  <div class="container">
+    <blockquote class="quote" data-rise>
+      "Sylvia is a wildly talented producer and a natural leader. She's excellent at identifying where a show has opportunity for growth and coming up with a smart, strategic way forward. I've worked with her on multiple shows and she is always an asset to the team, <mark>one of my go-to people in the audio industry</mark>! If you want to elevate your audio content and grow your show, I highly recommend working with Sylvia."
+    </blockquote>
     <div class="quote__by" data-rise>
       <img src="images/jenny-barber.jpeg" alt="Jenny Barber" width="176" height="176" loading="lazy" decoding="async">
       <div>
@@ -1329,7 +1291,13 @@ if ('IntersectionObserver' in window) {
 </section>
 
 <!-- ======================================================================
-     5. CREDIBILITY — violet full bleed. The heaviest section on the page.
+     5. THE RECEIPTS — cut from seven claims to four. The three removed were
+     the ones that carried no decision: the 80% consumption rate (it restates
+     the completion claim), the Apple Top 10 (no date, flagged as the weakest
+     line on the page), and 6M downloads (a figure about the show, not about
+     her). Icons removed entirely — at 60px the show art was illegible, the
+     Apple mark was a smudge and the dot field read as dead pixels. The
+     numbers carry the band.
      ====================================================================== -->
 <section class="section section--tight fill-violet">
   <div class="container">
@@ -1339,161 +1307,27 @@ if ('IntersectionObserver' in window) {
     <div class="receipts">
 
       <div class="receipt" data-rise data-claim="completion-wiwl">
-        <div class="rbadge rbadge--art">
-            <img src="images/wiwl-key-art.jpg" alt="Wild Ideas Worth Living" loading="lazy" width="128" height="128">
-            <svg class="rbadge__gauge" viewBox="0 0 76 76" aria-hidden="true">
-              <circle cx="38" cy="38" r="35.5" fill="none" stroke="rgba(255,255,255,.25)" stroke-width="3"/>
-              <circle cx="38" cy="38" r="35.5" fill="none" stroke="var(--lime)" stroke-width="3"
-                      stroke-linecap="round" stroke-dasharray="189.5 223" transform="rotate(-90 38 38)"/>
-            </svg>
-          </div>
-        <div>
-          <p class="receipt__fig"><span data-count="55" data-suffix="%">55%</span> to <span data-count="85" data-suffix="%">85%</span> completion.</p>
-          <p class="receipt__body"><em>Wild Ideas Worth Living</em> went from roughly 55 to 60 percent completion to around 85 percent over the time I've worked on it. In podcasting, 80 percent and up is exceptional. Getting there was a deliberate goal, not luck.</p>
-        </div>
+        <p class="receipt__delta"><span data-count="85" data-suffix="%">85%</span></p>
+        <p class="receipt__fig">Episode completion, up from roughly 55%.</p>
+        <p class="receipt__body"><em>Wild Ideas Worth Living</em> went from roughly 55 to 60 percent completion to around 85 percent over the time I've worked on it. In podcasting, 80 percent and up is exceptional. Getting there was a deliberate goal, not luck.</p>
       </div>
 
-      <!-- WO-07c. Two bars, because there are exactly two verified data points.
-           No interpolated curve: on a page selling "I'll tell you the truth
-           about your numbers", a decorative trend line is disqualifying. The
-           delta figure is the trend. -->
-      <div class="receipt receipt--wide" data-rise data-claim="growth-tt">
-        <div class="delta">
-          <div class="delta__bars">
-            <div class="delta__col">
-              <div class="delta__bar delta__bar--from" style="height:58%"></div>
-              <p class="delta__n">29,000</p><p class="delta__l">Start</p>
-            </div>
-            <div class="delta__col">
-              <div class="delta__bar delta__bar--to" style="height:100%"></div>
-              <p class="delta__n">50,000</p><p class="delta__l">~90 days</p>
-            </div>
-            <svg class="delta__arc" viewBox="0 0 120 90" aria-hidden="true" preserveAspectRatio="none">
-              <path d="M14 46 C46 6, 74 6, 106 4" fill="none" stroke="var(--magenta-hot)"
-                    stroke-width="2.5" stroke-linecap="round"/>
-              <path d="M106 4 99 9 M106 4 100 12" fill="none" stroke="var(--magenta-hot)"
-                    stroke-width="2.5" stroke-linecap="round"/>
-            </svg>
-          </div>
-          <p class="delta__pct"><span data-count="72" data-suffix="%">+72%</span></p>
-        </div>
-        <div>
-          <p class="receipt__fig">29,000 to 50,000 listens in about 90 days.</p>
-          <p class="receipt__body">That's <em>Thrifty Traveler</em>, after we put a real growth plan in place. It's held that level since and it's still climbing.</p>
-        </div>
-      </div>
-
-      <div class="receipt" data-rise data-claim="consumption-tt">
-        <div class="rbadge rbadge--art">
-            <img src="images/thrifty-traveler-key-art.jpeg" alt="The Thrifty Traveler Podcast" loading="lazy" width="128" height="128">
-            <svg class="rbadge__gauge" viewBox="0 0 76 76" aria-hidden="true">
-              <circle cx="38" cy="38" r="35.5" fill="none" stroke="rgba(255,255,255,.25)" stroke-width="3"/>
-              <circle cx="38" cy="38" r="35.5" fill="none" stroke="#fff" stroke-width="3"
-                      stroke-linecap="round" stroke-dasharray="178.4 223" transform="rotate(-90 38 38)"/>
-            </svg>
-          </div>
-        <div>
-          <p class="receipt__fig">An 80 percent plus consumption rate on <em>Thrifty Traveler</em>.</p>
-          <p class="receipt__body">People don't just press play. They stay.</p>
-        </div>
+      <div class="receipt" data-rise data-claim="growth-tt">
+        <p class="receipt__delta"><span data-count="72" data-prefix="+" data-suffix="%">+72%</span></p>
+        <p class="receipt__fig">29,000 to 50,000 listens in about 90 days.</p>
+        <p class="receipt__body">That's <em>Thrifty Traveler</em>, after we put a real growth plan in place. It's held that level since and it's still climbing.</p>
       </div>
 
       <div class="receipt" data-rise data-claim="live-event">
-        <div class="rbadge"><svg><use href="#i-tickets"/></svg></div>
-        <div>
-          <p class="receipt__fig">Almost 300 tickets sold at their first live show.</p>
-          <p class="receipt__body">It brought in sponsors and local press, and the company has kept investing in live events since. A second one happened alongside TEDx in Fargo.</p>
-        </div>
+        <p class="receipt__delta">300</p>
+        <p class="receipt__fig">Tickets at their first live show.</p>
+        <p class="receipt__body">Almost 300 sold. It brought in sponsors and local press, and the company has kept investing in live events since. A second one happened alongside TEDx in Fargo.</p>
       </div>
 
-      <div class="receipt" data-rise data-claim="apple-chart">
-        <div class="rbadge rbadge--plate">
-            <!-- Apple mark unmodified and uncombined: their guidelines forbid
-                 building it into a custom badge or lockup. The rank is type. -->
-            <img src="images/platform-apple-podcasts.png" alt="Apple Podcasts" loading="lazy">
-          </div>
-        <div>
-          <p class="receipt__fig">Top 10 travel podcasts on Apple Podcasts.</p>
-          <p class="receipt__body">United States.</p>
-        </div>
-      </div>
-
-      <div class="receipt" data-rise data-claim="downloads-wiwl">
-        <div class="dotfield" aria-hidden="true">
-              <span></span>
-              <span></span>
-              <span></span>
-              <span></span>
-              <span></span>
-              <span></span>
-              <span></span>
-              <span></span>
-              <span></span>
-              <span></span>
-              <span></span>
-              <span></span>
-              <span></span>
-              <span></span>
-              <span></span>
-              <span></span>
-              <span></span>
-              <span></span>
-              <span></span>
-              <span></span>
-              <span></span>
-              <span></span>
-              <span></span>
-              <span></span>
-              <span></span>
-              <span></span>
-              <span></span>
-              <span></span>
-              <span></span>
-              <span></span>
-              <span></span>
-              <span></span>
-              <span></span>
-              <span></span>
-              <span></span>
-              <span></span>
-              <span></span>
-              <span></span>
-              <span></span>
-              <span></span>
-              <span></span>
-              <span></span>
-              <span></span>
-              <span></span>
-              <span></span>
-              <span></span>
-              <span></span>
-              <span></span>
-              <span></span>
-              <span></span>
-              <span></span>
-              <span></span>
-              <span></span>
-              <span></span>
-              <span></span>
-              <span></span>
-              <span></span>
-              <span></span>
-              <span></span>
-              <span></span>
-          </div>
-        <div>
-          <p class="receipt__fig">Over 6 million downloads</p>
-          <p class="receipt__body">for <em>Wild Ideas Worth Living</em>.</p>
-        </div>
-      </div>
-
-      <div class="receipt receipt--wide" data-rise data-claim="shorty-award">
-        <div class="rbadge"><svg><use href="#i-award"/></svg></div>
-        <div>
-          <p class="receipt__fig">A Shorty Award that nobody would have won, because nobody would have entered.</p>
-          <p class="receipt__body">I spotted the category, ran the submission, and the show won it.</p>
-          <p class="small" style="margin-top:12px;color:rgba(255,255,255,.88)"><em>The Thrifty Traveler Podcast</em> &middot; 18th Annual Shorty Awards &middot; Winner and Audience Honor, Other Podcast Genres</p>
-        </div>
+      <div class="receipt" data-rise data-claim="shorty-award">
+        <p class="receipt__delta">Won</p>
+        <p class="receipt__fig">A Shorty Award nobody would have won, because nobody would have entered.</p>
+        <p class="receipt__body">I spotted the category, ran the submission, and the show won it. <em>The Thrifty Traveler Podcast</em>, 18th Annual Shorty Awards: Winner and Audience Honor, Other Podcast Genres.</p>
       </div>
 
     </div>
@@ -1508,8 +1342,8 @@ if ('IntersectionObserver' in window) {
 
      The count "Ten" is 2 + 8 and is confirmed by Travis, 20 Aug 2026.
      ====================================================================== -->
-<section class="section fill-ink" style="padding-block:112px">
-  <div class="container">
+<section class="section fill-ink" style="padding-block:104px">
+  <div class="container container--wide">
     <p class="eyebrow" data-rise>The work</p>
     <h2 class="h2 measure-h2" data-rise>Ten shows. Two of them every single week.</h2>
     <p class="lead work__sub" data-rise>The weekly work is where the craft lives. The rest is where the range is.</p>
@@ -1551,54 +1385,24 @@ if ('IntersectionObserver' in window) {
       <li data-rise><img src="images/show-beauty-biz.jpeg" alt="The Beauty Biz Show" loading="lazy" decoding="async"><span>The Beauty Biz Show</span></li>
       <li data-rise><img src="images/show-ask-dr-ben.webp" alt="Ask Dr. Ben" loading="lazy" decoding="async"><span>Ask Dr. Ben</span></li>
     </ul>
-  </div>
-</section>
 
-<!-- ======================================================================
-     CREDENTIALS — WO-09. Second and final violet band, non-adjacent to the
-     Receipts and structurally different from it: a rail, not a card grid.
-     Awards were a plain list, the W3 badge floated alone, and the Salt and
-     Watson credentials were buried in a paragraph nobody reaches.
-
-     No invented badges. Where an official asset is not in the repo the award
-     is set in type, because a fabricated award badge is the single most
-     damaging asset that could appear on this page.
-     ====================================================================== -->
-<section class="section fill-violet" style="padding-block:88px">
-  <div class="container">
-    <p class="eyebrow" data-rise>Credentials</p>
-    <h2 class="h2" data-rise>Ten years of this, on the record.</h2>
-
-    <ul class="rail" data-rise data-claim="awards-list">
+    <div class="creds">
+      <p class="eyebrow" data-rise>On the record</p>
+<ul class="rail" data-rise data-claim="awards-list">
       <li class="rail__item">
         <img class="rail__badge" src="images/w3-winner-badge.jpg" alt="W3 Awards winner badge" width="144" height="144" loading="lazy">
         <p class="rail__name">W3 Awards</p>
-        <p class="rail__meta">2024 &middot; Best in Show, Lifestyle</p>
+        <p class="rail__meta">2024 &middot; Best in Show, Lifestyle<br>2024 &middot; two Silver, Lifestyle and Sports</p>
       </li>
       <li class="rail__item">
-        <p class="rail__type">W3</p>
-        <p class="rail__name">W3 Awards</p>
-        <p class="rail__meta">2024 &middot; two Silver, Lifestyle and Sports</p>
+        <p class="rail__type">Shorty</p>
+        <p class="rail__name">Shorty Awards</p>
+        <p class="rail__meta">18th &middot; Winner and Audience Honor, Other Podcast Genres<br>17th &middot; Bronze Honor, Branded Podcast<br>17th &middot; Finalist, Lifestyle &amp; Entertainment</p>
       </li>
       <li class="rail__item">
         <p class="rail__type">Signal</p>
         <p class="rail__name">Signal Awards</p>
         <p class="rail__meta">2022 &middot; Silver, Best Branded Podcast</p>
-      </li>
-      <li class="rail__item">
-        <p class="rail__type">Shorty</p>
-        <p class="rail__name">Shorty Awards</p>
-        <p class="rail__meta">17th &middot; Finalist, Lifestyle &amp; Entertainment</p>
-      </li>
-      <li class="rail__item">
-        <p class="rail__type">Shorty</p>
-        <p class="rail__name">Shorty Awards</p>
-        <p class="rail__meta">17th &middot; Bronze Honor, Branded Podcast</p>
-      </li>
-      <li class="rail__item">
-        <p class="rail__type">Shorty</p>
-        <p class="rail__name">Shorty Awards</p>
-        <p class="rail__meta">18th &middot; Winner, Other Podcast Genres</p>
       </li>
     </ul>
 
@@ -1619,6 +1423,7 @@ if ('IntersectionObserver' in window) {
 
     <p class="small rail__foot" data-rise>Working professionally in audio since 2015. In radio since she was eighteen.</p>
   </div>
+    </div>
 </section>
 
 <!-- ======================================================================
@@ -1642,8 +1447,8 @@ if ('IntersectionObserver' in window) {
      section. Platform logos land here, under checklist item 2, where they
      mean something.
      ====================================================================== -->
-<section class="section" style="padding-block:136px">
-  <div class="container">
+<section class="section" style="padding-block:104px">
+  <div class="container container--wide">
     <p class="eyebrow" data-rise>What you can book</p>
     <h2 class="h2 measure-h2" data-rise>It almost always starts with an audit.</h2>
     <p class="lead measure" data-rise>Every engagement is scoped to what the show actually needs. The first move is finding out where you stand, whether that becomes a long relationship or stays a one-time project.</p>
@@ -1712,7 +1517,7 @@ if ('IntersectionObserver' in window) {
      8. ABOUT
      ====================================================================== -->
 <section class="section">
-  <div class="container about">
+  <div class="container container--wide about">
     <div data-rise>
       <div class="about__photo">
         <img src="images/sylvia-portrait-betholson.jpg" alt="Sylvia Nopar Thomas, seated at a wooden table against a white brick wall" width="800" height="1200">
@@ -1774,7 +1579,7 @@ if ('IntersectionObserver' in window) {
      10. FINAL CTA
      ====================================================================== -->
 <section class="section section--final" id="contact">
-  <div class="container final">
+  <div class="container container--wide final">
 
     <div class="final__copy">
       <h2 class="h-hero" data-rise>Start with a conversation. That's it.</h2>
@@ -1907,7 +1712,8 @@ if ('IntersectionObserver' in window) {
   function countUp(el) {
     var target = parseFloat(el.getAttribute('data-count'));
     var suffix = el.getAttribute('data-suffix') || '';
-    if (reduced) { el.textContent = target + suffix; return; }
+    var prefix = el.getAttribute('data-prefix') || '';
+    if (reduced) { el.textContent = prefix + target + suffix; return; }
 
     var duration = 1200;
     var start = null;
@@ -1916,11 +1722,11 @@ if ('IntersectionObserver' in window) {
       if (start === null) start = ts;
       var p = Math.min((ts - start) / duration, 1);
       var eased = 1 - Math.pow(1 - p, 3); // ease-out cubic
-      el.textContent = Math.round(target * eased) + suffix;
+      el.textContent = prefix + Math.round(target * eased) + suffix;
       if (p < 1) requestAnimationFrame(step);
     }
 
-    el.textContent = '0' + suffix;
+    el.textContent = prefix + '0' + suffix;
     requestAnimationFrame(step);
   }
 
