@@ -347,10 +347,9 @@ body{
    5e. THE PROMISE — beat 04 given its own moment
    ========================================================================== */
 .promise{text-align:left}
-.promise .h2{max-width:16ch}
-.promise p{
-  margin-top:var(--s24);font-size:22px;line-height:1.5;
-  max-width:52ch;color:var(--ink);
+.promise__grid{display:grid;gap:var(--s48);align-items:center}
+@media (min-width:980px){
+  .promise__grid{grid-template-columns:minmax(0,1fr) 360px;gap:var(--s96)}
 }
 
 /* ==========================================================================
@@ -449,19 +448,68 @@ body{
 .rule-magenta{width:64px;height:3px;background:var(--magenta-hot);margin-bottom:var(--s24)}
 
 /* ==========================================================================
+   PROBLEM DEVICES — WO-04
+   ========================================================================== */
+.dashsplit{
+  margin-block:var(--s48);
+  display:grid;gap:var(--s48);align-items:center;
+}
+@media (min-width:900px){
+  .dashsplit{grid-template-columns:minmax(0,1fr) 300px;gap:var(--s64)}
+}
+.dashsplit .prose{margin:0}
+.dash{
+  display:grid;grid-template-columns:repeat(5,1fr);
+  gap:12px 10px;align-content:start;
+}
+.dash__n{
+  font-size:13px;line-height:1.2;color:rgba(23,19,31,.18);
+  font-variant-numeric:tabular-nums;letter-spacing:-.01em;
+}
+/* The two that matter. */
+.dash__n--live{
+  color:var(--magenta);font-size:15px;font-weight:600;
+}
+@media (max-width:899px){
+  .dash{grid-template-columns:repeat(8,1fr);gap:10px 8px}
+  .dash__n{font-size:11px}
+  .dash__n--live{font-size:13px}
+}
+
+.aside{
+  margin-block:var(--s64);
+  max-width:640px;margin-inline:auto;text-align:center;
+}
+.aside::before{
+  content:"";display:block;width:48px;height:3px;
+  background:var(--magenta-hot);margin:0 auto var(--s32);
+}
+.aside p{
+  font-family:var(--display);font-weight:600;
+  font-size:30px;line-height:1.3;letter-spacing:-.01em;color:var(--ink);
+}
+@media (max-width:900px){.aside p{font-size:22px}.aside{margin-block:var(--s48)}}
+
+/* ==========================================================================
    10. SOLUTION — four beats, magenta numerals, hairline rules
    ========================================================================== */
 .beats{margin-top:var(--s64);border-top:1px solid var(--line)}
 .beat{
-  display:grid;grid-template-columns:120px minmax(0,1fr);
+  display:grid;grid-template-columns:72px minmax(0,1fr);
   gap:var(--gutter);
   padding-block:var(--s48);
   border-bottom:1px solid var(--line);
 }
-.beat__num{
-  font-family:var(--display);font-weight:800;font-size:30px;
-  letter-spacing:-.01em;color:var(--magenta-hot);line-height:1.2;
+/* Marks, not numerals. 01/02/03 promised an order of operations; these three
+   beats are simultaneous, so the numbering made a promise the content did not
+   keep. Drawn to one 32px grid at 1.75px, one visual language. */
+.beat__num{line-height:1}
+.beat__icon{width:34px;height:34px;display:block;overflow:visible}
+.beat__icon path{
+  fill:none;stroke:var(--magenta);stroke-width:1.75;
+  stroke-linecap:round;stroke-linejoin:round;
 }
+.beat__icon path.dim{stroke:var(--ink);opacity:.22}
 .beat__body{max-width:62ch}
 .beat__body p{margin-top:var(--s16);color:var(--slate)}
 
@@ -557,7 +605,12 @@ body{
 .midcta{text-align:center}
 .midcta .h2{margin-inline:auto;max-width:900px}
 .midcta .lead{margin-inline:auto;max-width:52ch;color:var(--slate)}
-.midcta .small{margin-top:var(--s16);margin-inline:auto;max-width:48ch}
+.midcta .small{margin-top:var(--s24);margin-inline:auto;max-width:48ch}
+.midcta__actions{display:flex;flex-wrap:wrap;gap:var(--s16);justify-content:center}
+@media (max-width:560px){
+  .midcta__actions{flex-direction:column}
+  .midcta__actions .btn{width:100%}
+}
 
 /* ==========================================================================
    13. WHAT YOU CAN BOOK
@@ -606,9 +659,9 @@ body{
 /* ==========================================================================
    15. OBJECTIONS — peach full bleed, white cards
    ========================================================================== */
-.objections{margin-top:var(--s64);display:grid;gap:var(--s24)}
+.objections{margin-top:var(--s64);display:grid;gap:var(--s48)}
 .obj{
-  background:var(--paper);
+  background:var(--paper);border-top:1px solid rgba(23,19,31,.12);
   border-radius:var(--r-card);
   padding:var(--s32);
   display:grid;grid-template-columns:auto minmax(0,1fr);
@@ -877,6 +930,49 @@ body{
 }
 
 /* ==========================================================================
+   THE PROMISE — WO-07a
+   ========================================================================== */
+.promise__h{
+  font-family:var(--display);font-weight:800;
+  font-size:72px;line-height:.98;letter-spacing:-.03em;
+  margin-top:var(--s16);max-width:16ch;text-wrap:balance;
+}
+.promise__lead{margin-top:var(--s32);font-size:22px;line-height:1.5;max-width:52ch}
+.promise__beat{
+  margin-top:var(--s24);font-family:var(--display);font-weight:600;
+  font-size:22px;line-height:1.4;color:var(--magenta-strong);max-width:40ch;
+}
+.waves{
+  display:flex;align-items:center;gap:var(--s24);
+}
+@media (max-width:979px){.waves{margin-top:var(--s48)}}
+.wavecol{flex:1;margin:0}
+.wavecol svg{width:100%;height:56px;display:block;overflow:visible}
+.wavepath{fill:none;stroke-linecap:round;stroke-width:2}
+/* .35 measured 2.16:1 on peach; this graphic carries the section's
+   argument, so it needs the 3:1 non-text threshold. */
+.wavepath--before{stroke:rgba(23,19,31,.5)}
+.wavepath--after{stroke:var(--magenta-strong)}
+/* Y-only scale, from the shared centre line: shape preserved exactly. */
+.waveafter{transform:scaleY(1);transform-origin:20px center;transition:transform 900ms var(--ease-rise)}
+.is-in .waveafter,[data-rise].is-in .waveafter{transform:scaleY(1.9)}
+.wavecol figcaption{
+  margin-top:var(--s12);
+  font-size:13px;letter-spacing:.10em;text-transform:uppercase;
+  font-weight:600;color:var(--slate);
+}
+.waves__arrow{font-size:24px;color:var(--ink);flex:0 0 auto;opacity:.4}
+@media (max-width:900px){
+  .promise__h{font-size:40px;letter-spacing:-.02em}
+  .promise__lead,.promise__beat{font-size:19px}
+  .waves{gap:var(--s16);margin-top:var(--s48)}
+  .wavecol svg{height:44px}
+}
+@media (prefers-reduced-motion:reduce){
+  .waveafter{transition:none;transform:scaleY(1.9)}
+}
+
+/* ==========================================================================
    TESTIMONIAL
    ========================================================================== */
 .quote{
@@ -953,7 +1049,6 @@ body{
   .delta{width:100%}
   .delta__pct{font-size:44px}
 }
-
 
 /* ==========================================================================
    17. FOOTER
@@ -1212,9 +1307,71 @@ if ('IntersectionObserver' in window) {
     <div class="prose measure" data-rise>
       <p>You publish every week. The show is good. You know it's good, because you're there when it gets made.</p>
       <p>Then the numbers come in and they don't really tell you anything.</p>
-      <p>One episode does twice the traffic of the one before it and nobody on the team can say why. You're not sure how many people actually finish. You're not sure whether YouTube is the thing now or a distraction. There's a dashboard somewhere with forty numbers on it and no one has ever explained which two matter.</p>
+    </div>
+
+    <!-- WO-04. The copy says "a dashboard somewhere with forty numbers on it
+         and no one has ever explained which two matter", so the page renders
+         exactly that: forty generic figures, two of them live. Illustration
+         derived from her own sentence rather than an icon from a set.
+         aria-hidden — the paragraph already carries the meaning. -->
+    <div class="dashsplit">
+      <div class="prose measure">
+        <p>One episode does twice the traffic of the one before it and nobody on the team can say why. You're not sure how many people actually finish. You're not sure whether YouTube is the thing now or a distraction. There's a dashboard somewhere with forty numbers on it and no one has ever explained which two matter.</p>
+      </div>
+      <div class="dash" aria-hidden="true" data-rise>
+        <span class="dash__n">43%</span>
+        <span class="dash__n">10:35</span>
+        <span class="dash__n">1,795</span>
+        <span class="dash__n">11.9</span>
+        <span class="dash__n">197</span>
+        <span class="dash__n">48%</span>
+        <span class="dash__n">38:13</span>
+        <span class="dash__n">9,317</span>
+        <span class="dash__n">29.1</span>
+        <span class="dash__n">189</span>
+        <span class="dash__n">57%</span>
+        <span class="dash__n dash__n--live">27:14</span>
+        <span class="dash__n">4,947</span>
+        <span class="dash__n">13.9</span>
+        <span class="dash__n">535</span>
+        <span class="dash__n">9%</span>
+        <span class="dash__n">53:46</span>
+        <span class="dash__n">3,032</span>
+        <span class="dash__n">30.1</span>
+        <span class="dash__n">691</span>
+        <span class="dash__n">76%</span>
+        <span class="dash__n">26:13</span>
+        <span class="dash__n">4,626</span>
+        <span class="dash__n">7.9</span>
+        <span class="dash__n">980</span>
+        <span class="dash__n">19%</span>
+        <span class="dash__n dash__n--live">19:36</span>
+        <span class="dash__n">3,367</span>
+        <span class="dash__n">71.2</span>
+        <span class="dash__n">685</span>
+        <span class="dash__n">41%</span>
+        <span class="dash__n">36:53</span>
+        <span class="dash__n">3,965</span>
+        <span class="dash__n">15.4</span>
+        <span class="dash__n">482</span>
+        <span class="dash__n">14%</span>
+        <span class="dash__n">36:55</span>
+        <span class="dash__n">2,032</span>
+        <span class="dash__n">74.1</span>
+        <span class="dash__n">734</span>
+      </div>
+    </div>
+
+    <div class="prose measure">
       <p>So you keep making the show the way you've always made it, and you hope.</p>
+    </div>
+
+    <!-- The most human sentence on the page. It was buried mid-paragraph. -->
+    <div class="aside" data-rise>
       <p>Here's the quieter part. Podcasting gets lonely. You're in a studio, or a room, or a closet, talking into a microphone, and there's almost no face to face contact with the people on the other end of it. You can go a very long time without knowing whether any of it is reaching anyone.</p>
+    </div>
+
+    <div class="prose measure">
       <p>And in the back of your mind there's a version where the show just flattens out. It doesn't fail, exactly. It plateaus. And eventually somebody asks what it's doing for the business, and you don't have a good answer ready.</p>
     </div>
   </div>
@@ -1232,21 +1389,21 @@ if ('IntersectionObserver' in window) {
 
     <div class="beats">
       <div class="beat" data-rise>
-        <div class="beat__num">01</div>
+        <div class="beat__num"><svg viewBox="0 0 32 32" class="beat__icon" aria-hidden="true"><path d="M2 20h4l3-9 4 16 4-20 3.5 13H30"/><path class="dim" d="M6 27h20"/></svg></div>
         <div class="beat__body">
           <h3 class="h3">You get a straight answer about where you actually stand.</h3>
           <p>I listen to your show the way a listener does, all the way through. Then I go into your back end, your platform numbers, your YouTube, your drop-off points. You end up with a clear read on who's listening, what they're staying for, and where they leave.</p>
         </div>
       </div>
       <div class="beat" data-rise>
-        <div class="beat__num">02</div>
+        <div class="beat__num"><svg viewBox="0 0 32 32" class="beat__icon" aria-hidden="true"><path d="M4 24l7-7 5 5 6-6"/><path d="M17 8h9v9"/><path class="dim" d="M4 29h24"/></svg></div>
         <div class="beat__body">
           <h3 class="h3">You stop waiting for a big rebuild to see movement.</h3>
           <p>There's almost always a handful of things you can change this month that will move the needle. I find those first, so you get momentum while we work on the bigger stuff.</p>
         </div>
       </div>
       <div class="beat" data-rise>
-        <div class="beat__num">03</div>
+        <div class="beat__num"><svg viewBox="0 0 32 32" class="beat__icon" aria-hidden="true"><path class="dim" d="M2 23h28"/><path d="M8 23a8 8 0 0 1 16 0"/><path d="M16 15V4M16 4l-4 4M16 4l4 4"/></svg></div>
         <div class="beat__body">
           <h3 class="h3">Somebody's finally watching the horizon for you.</h3>
           <p>Chart pushes, platform features, awards you qualify for and never submitted, live events, the right industry people to know. That work never makes it to the top of your list because you're busy shipping episodes. It's on the top of mine.</p>
@@ -1257,17 +1414,38 @@ if ('IntersectionObserver' in window) {
 </section>
 
 <!-- ======================================================================
-     THE PROMISE — was beat 04 of 4.
-     Pulled out of the list because it is not a service description: it is the
-     only line on the page that answers the fear that blocks the sale. Set as
-     list item four, in typography identical to the three tasks above it, it
-     read as the fourth most important thing here. Copy is unchanged.
+     THE PROMISE — WO-07a. The emotional hinge of the page and the answer to
+     the fear that blocks the sale, so it runs at hero scale rather than H2.
+
+     The two waveforms are the SAME path; the second is scaled on Y only. Same
+     peaks, same troughs, same rhythm, more amplitude: same voice, more reach.
+     That identity is the argument, so it is generated from one path rather
+     than drawn twice.
      ====================================================================== -->
-<section class="section section--tight fill-peach">
-  <div class="container promise">
+<section class="section fill-peach">
+  <div class="container promise"><div class="promise__grid"><div>
     <p class="eyebrow" data-rise>The promise underneath all of it</p>
-    <h2 class="h2" data-rise>Your show still sounds like your show.</h2>
-    <p data-rise>I'm not going to hand you a plan that scrubs off whatever made people love it in the first place. Growth that costs you your voice isn't growth, it's a different show with better numbers.</p>
+    <h2 class="promise__h" data-rise>Your show still sounds like your show.</h2>
+    <p class="promise__lead" data-rise>I'm not going to hand you a plan that scrubs off whatever made people love it in the first place. Growth that costs you your voice isn't growth, it's a different show with better numbers.</p>
+    <p class="promise__beat" data-rise>That is the whole job. Everything else is method.</p>
+    </div>
+
+    <div class="waves" data-rise>
+      <figure class="wavecol">
+        <svg viewBox="0 0 240 40" preserveAspectRatio="none" aria-hidden="true">
+          <path d="M 0 25.21 L 4 30.5 L 8 33.16 L 12 33.06 L 16 31.45 L 20 29.79 L 24 28.5 L 28 26.78 L 32 23.52 L 36 18.57 L 40 13.29 L 44 9.82 L 48 9.65 L 52 12.56 L 56 16.76 L 60 20.16 L 64 21.71 L 68 21.89 L 72 21.96 L 76 22.59 L 80 23.19 L 84 22.32 L 88 19.03 L 92 13.84 L 96 8.76 L 100 6.01 L 104 6.65 L 108 9.92 L 112 13.99 L 116 17.37 L 120 19.84 L 124 22.31 L 128 25.68 L 132 29.68 L 136 32.77 L 140 33.17 L 144 30.25 L 148 25.16 L 152 20.18 L 156 17.23 L 160 16.75 L 164 17.68 L 168 18.57 L 172 18.87 L 176 19.3 L 180 21.07 L 184 24.58 L 188 28.72 L 192 31.38 L 196 30.86 L 200 27.06 L 204 21.58 L 208 16.56 L 212 13.32 L 216 11.62 L 220 10.32 L 224 8.66 L 228 7.12 L 232 7.13 L 236 9.91 L 240 15.19" class="wavepath wavepath--before"/>
+        </svg>
+        <figcaption>Before</figcaption>
+      </figure>
+      <span class="waves__arrow" aria-hidden="true">&rarr;</span>
+      <figure class="wavecol">
+        <svg viewBox="0 0 240 40" preserveAspectRatio="none" aria-hidden="true">
+          <g class="waveafter"><path d="M 0 25.21 L 4 30.5 L 8 33.16 L 12 33.06 L 16 31.45 L 20 29.79 L 24 28.5 L 28 26.78 L 32 23.52 L 36 18.57 L 40 13.29 L 44 9.82 L 48 9.65 L 52 12.56 L 56 16.76 L 60 20.16 L 64 21.71 L 68 21.89 L 72 21.96 L 76 22.59 L 80 23.19 L 84 22.32 L 88 19.03 L 92 13.84 L 96 8.76 L 100 6.01 L 104 6.65 L 108 9.92 L 112 13.99 L 116 17.37 L 120 19.84 L 124 22.31 L 128 25.68 L 132 29.68 L 136 32.77 L 140 33.17 L 144 30.25 L 148 25.16 L 152 20.18 L 156 17.23 L 160 16.75 L 164 17.68 L 168 18.57 L 172 18.87 L 176 19.3 L 180 21.07 L 184 24.58 L 188 28.72 L 192 31.38 L 196 30.86 L 200 27.06 L 204 21.58 L 208 16.56 L 212 13.32 L 216 11.62 L 220 10.32 L 224 8.66 L 228 7.12 L 232 7.13 L 236 9.91 L 240 15.19" class="wavepath wavepath--after"/></g>
+        </svg>
+        <figcaption>After</figcaption>
+      </figure>
+    </div>
+    </div>
   </div>
 </section>
 
@@ -1379,7 +1557,6 @@ if ('IntersectionObserver' in window) {
       </article>
     </div>
 
-
     <div class="platband" data-rise>
       <p class="eyebrow">Grown on every platform your show lives on</p>
       <ul class="platband__row">
@@ -1451,8 +1628,11 @@ if ('IntersectionObserver' in window) {
     <h2 class="h2" data-rise>If you've been thinking about your own show this whole time, that's usually the sign.</h2>
     <p class="lead" data-rise>Twenty minutes. You tell me what's going on with the show and what's been bugging you about it. I'll tell you honestly whether I think I can help, and if I can't, I'll say so.</p>
     <div class="cta-gap" data-rise>
-      <a class="btn btn--primary" href="#contact">Book the intro call</a>
-      <p class="small">I read and answer every message myself. It comes straight to me, not to an inbox nobody checks. Or <a class="link" href="https://www.linkedin.com/in/sylvia-nopar-thomas/" target="_blank" rel="noopener">message me on LinkedIn</a>.</p>
+      <div class="midcta__actions">
+        <a class="btn btn--primary" href="#contact">Book the intro call</a>
+        <a class="btn btn--outline" href="https://www.linkedin.com/in/sylvia-nopar-thomas/" target="_blank" rel="noopener">Message me on LinkedIn</a>
+      </div>
+      <p class="small">I read and answer every message myself. It comes straight to me, not to an inbox nobody checks.</p>
     </div>
   </div>
 </section>
