@@ -8,7 +8,5 @@ images/                     assets
 functions/api/contact.js    Cloudflare Pages Function behind the contact form
 ```
 
-Internal working notes are in `_private/` and are deliberately not committed:
-this repo deploys straight to the live domain, so anything tracked here is
-published. Keep client notes, unverified-claim flags, and launch checklists
-out of the repo.
+This repo deploys straight to the live domain, so every tracked file is a
+published file. Working notes belong in `_private/`, which is untracked.
