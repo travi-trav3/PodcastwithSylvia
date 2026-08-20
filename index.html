@@ -33,15 +33,18 @@
   --bone:    #F8F4EE;
   --paper:   #FFFFFF;
   --ink:     #17131F;
-  --slate:   #5B5468;
-  --magenta: #E8336D;
-  /* CTA fill. #E8336D under white is 4.10:1 and fails AA at button sizes, so
-     the interactive fill darkens and #E8336D keeps the spike/rule/large-display
-     role it reads best in. */
-  --magenta-deep: #C9245C;
-  --violet:  #4A2CE0;
+  --slate:   #635C70;
+  /* Three magentas, by role, because one cannot pass AA everywhere it is used.
+     --magenta        every button fill, and every text use under 24px
+     --magenta-hot    display numerals 24px+, highlight bars, decorative rules,
+                      non-text UI. NEVER a fill behind white text.
+     --magenta-strong button hover, inline links, small accent text on --peach */
+  --magenta:        #D42060;
+  --magenta-hot:    #E8336D;
+  --magenta-strong: #A81050;
+  --violet:  #7A2BF0;
   --lime:    #C8F04A;
-  --peach:   #FFD9C7;
+  --peach:   #FFD9C4;
   --line:    #E4DCD0;
 
   /* Space — 4px base */
@@ -127,7 +130,9 @@ body{
   font-size:13px;line-height:1.2;letter-spacing:.10em;
   text-transform:uppercase;font-weight:600;color:var(--slate);
 }
-.fill-violet .eyebrow{color:rgba(255,255,255,.72)}
+/* 88%, not 72%: the v2 violet (#7A2BF0) is lighter than #4A2CE0, which
+   dropped this from 4.69:1 to 3.87:1. */
+.fill-violet .eyebrow{color:rgba(255,255,255,.88)}
 
 .h-hero{
   font-family:var(--display);
@@ -150,7 +155,7 @@ body{
 }
 .lead{font-size:22px;line-height:1.5}
 .small{font-size:15px;line-height:1.5;color:var(--slate)}
-.fill-violet .small{color:rgba(255,255,255,.72)}
+.fill-violet .small{color:rgba(255,255,255,.88)}
 
 /* Rhythm inside a section */
 .eyebrow + *{margin-top:var(--s16)}
@@ -173,8 +178,8 @@ body{
   transition:transform 160ms ease-out, background-color 160ms ease-out,
              border-color 160ms ease-out, color 160ms ease-out;
 }
-.btn--primary{background:var(--magenta-deep);color:#fff}
-.btn--primary:hover{background:#A81B4B;transform:translateY(-2px)}
+.btn--primary{background:var(--magenta);color:#fff}
+.btn--primary:hover{background:var(--magenta-strong);transform:translateY(-2px)}
 .btn--primary:active{transform:translateY(0);transition-duration:80ms}
 
 .btn--outline{background:transparent;color:var(--ink);border-color:var(--ink)}
@@ -191,7 +196,7 @@ body{
 }
 .link::after{
   content:"";position:absolute;left:0;right:0;bottom:-2px;height:2px;
-  background:var(--magenta);
+  background:var(--magenta-hot);
   transform:scaleX(0);transform-origin:left;
   transition:transform 220ms ease-out;
 }
@@ -296,7 +301,7 @@ body{
 /* Same rule as .card__label: magenta at 13px is 4.10:1 and fails AA.
    The colour rides the rule, the text is ink. */
 .show__meta{color:var(--ink);font-weight:600;display:flex;align-items:center;gap:var(--s8)}
-.show__meta::before{content:"";width:18px;height:2px;background:var(--magenta);flex:0 0 auto}
+.show__meta::before{content:"";width:18px;height:2px;background:var(--magenta-hot);flex:0 0 auto}
 .show h3{margin-top:var(--s12);font-size:26px}
 .show__role{margin-top:var(--s16);color:var(--slate);font-size:17px;line-height:1.6}
 .shows-note{margin-top:var(--s32);max-width:62ch}
@@ -371,7 +376,7 @@ body{
   display:flex;align-items:center;gap:var(--s24);
   white-space:nowrap;
 }
-.ticker__item::after{content:"";width:5px;height:5px;border-radius:50%;background:var(--magenta)}
+.ticker__item::after{content:"";width:5px;height:5px;border-radius:50%;background:var(--magenta-hot)}
 @keyframes ticker{from{transform:translateX(0)}to{transform:translateX(-50%)}}
 
 /* ==========================================================================
@@ -391,13 +396,13 @@ body{
 }
 .numbers__cell:first-child{padding-left:0}
 .numbers__cell:last-child{border-right:0;padding-right:0}
-.numbers__fig{color:var(--magenta);font-size:clamp(56px,6.2vw,96px)}
+.numbers__fig{color:var(--magenta-hot);font-size:clamp(56px,6.2vw,96px)}
 .numbers__label{margin-top:var(--s16);max-width:22ch}
 
 /* ==========================================================================
    9. PROBLEM
    ========================================================================== */
-.rule-magenta{width:64px;height:3px;background:var(--magenta);margin-bottom:var(--s24)}
+.rule-magenta{width:64px;height:3px;background:var(--magenta-hot);margin-bottom:var(--s24)}
 
 /* ==========================================================================
    10. SOLUTION — four beats, magenta numerals, hairline rules
@@ -411,7 +416,7 @@ body{
 }
 .beat__num{
   font-family:var(--display);font-weight:800;font-size:30px;
-  letter-spacing:-.01em;color:var(--magenta);line-height:1.2;
+  letter-spacing:-.01em;color:var(--magenta-hot);line-height:1.2;
 }
 .beat__body{max-width:62ch}
 .beat__body p{margin-top:var(--s16);color:var(--slate)}
@@ -517,7 +522,7 @@ body{
 /* Ink, not magenta: magenta at 13px is 4.10:1 on white and the palette forbids
    magenta type below 24px. The colour carries on the rule instead. */
 .card__label{color:var(--ink);display:flex;align-items:center;gap:var(--s8)}
-.card__label::before{content:"";width:18px;height:2px;background:var(--magenta);flex:0 0 auto}
+.card__label::before{content:"";width:18px;height:2px;background:var(--magenta-hot);flex:0 0 auto}
 .card h3{margin-top:var(--s16);font-size:24px}
 .card ul{margin-top:var(--s24)}
 .card ul li{
@@ -561,7 +566,7 @@ body{
 }
 .obj__q{
   font-family:var(--display);font-weight:800;font-size:40px;
-  line-height:1;color:var(--magenta);
+  line-height:1;color:var(--magenta-hot);
 }
 .obj h3{font-size:24px}
 .obj p{margin-top:var(--s16);color:var(--slate);max-width:74ch}
@@ -652,10 +657,10 @@ body{
    4.46:1 and the system forbids magenta type below 24px anyway. */
 .footer a{
   color:var(--bone);text-decoration:none;font-weight:600;
-  border-bottom:2px solid var(--magenta);padding-bottom:2px;
+  border-bottom:2px solid var(--magenta-hot);padding-bottom:2px;
   transition:color 160ms ease-out,border-color 160ms ease-out;
 }
-.footer a:hover{color:var(--magenta);border-color:var(--magenta)}
+.footer a:hover{color:var(--magenta-hot);border-color:var(--magenta-hot)}
 .footer a:focus-visible{outline:2px solid var(--bone);outline-offset:3px;border-radius:2px}
 .footer__meta{color:rgba(248,244,238,.5);font-size:15px}
 
