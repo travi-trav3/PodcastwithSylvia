@@ -644,6 +644,35 @@ body{
 .book{align-items:start}
 
 /* ==========================================================================
+   TESTIMONIAL — WO-06
+   The only third-party voice on the page. Set as a statement, not a
+   decorative pull-quote: real testimonials should look like someone said
+   them, not like a design element.
+   ========================================================================== */
+.quote{max-width:900px}
+.quote blockquote{
+  font-family:var(--display);font-weight:600;
+  font-size:30px;line-height:1.4;letter-spacing:-.01em;
+  color:var(--ink);margin:0;
+}
+.quote mark{background:none;color:var(--magenta-strong);font:inherit}
+.quote__by{
+  margin-top:var(--s48);
+  display:flex;align-items:center;gap:var(--s24);
+}
+.quote__by img{
+  width:88px;height:88px;border-radius:50%;object-fit:cover;
+  flex:0 0 auto;background:var(--line);
+}
+.quote__name{font-size:18px;font-weight:600;line-height:1.3}
+.quote__title{font-size:15px;color:var(--slate);line-height:1.4;margin-top:2px}
+@media (max-width:900px){
+  .quote blockquote{font-size:22px;line-height:1.45}
+  .quote__by{gap:var(--s16);margin-top:var(--s32)}
+  .quote__by img{width:64px;height:64px}
+}
+
+/* ==========================================================================
    17. FOOTER
    ========================================================================== */
 .footer{background:var(--ink);color:var(--bone);padding-block:var(--s64)}
@@ -1005,6 +1034,28 @@ if ('IntersectionObserver' in window) {
 </section>
 
 <!-- ======================================================================
+     TESTIMONIAL — WO-06
+     Sits on the bridge between the Promise (feeling) and the Receipts
+     (numbers): a human voice converts the first into the second, and
+     inoculates the reader before they start discounting unattributed stats.
+
+     TITLE_JENNY is a single constant so confirming the exact string is a
+     one-line change. NOT YET CONFIRMED with Jenny Barber.
+     ====================================================================== -->
+<section class="section" style="padding-block:120px">
+  <div class="container quote">
+    <blockquote data-rise>"Sylvia is a wildly talented producer and a natural leader. She's excellent at identifying where a show has opportunity for growth and coming up with a smart, strategic way forward. I've worked with her on multiple shows and she is always an asset to the team, <mark>one of my go-to people in the audio industry</mark>! If you want to elevate your audio content and grow your show, I highly recommend working with Sylvia."</blockquote>
+    <div class="quote__by" data-rise>
+      <img src="images/jenny-barber.jpeg" alt="Jenny Barber" width="176" height="176" loading="lazy" decoding="async">
+      <div>
+        <p class="quote__name">Jenny Barber</p>
+        <p class="quote__title" id="title-jenny">Program Manager, Podcasts, REI Co-op</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ======================================================================
      5. CREDIBILITY — violet full bleed. The heaviest section on the page.
      ====================================================================== -->
 <section class="section section--tight fill-violet">
@@ -1298,6 +1349,8 @@ if ('IntersectionObserver' in window) {
         <a class="btn btn--outline" href="https://www.linkedin.com/in/sylvia-nopar-thomas/" target="_blank" rel="noopener">Or message me on LinkedIn</a>
       </div>
       <p class="small" style="margin-top:var(--s16)" data-rise>Every message comes to me and I answer it myself.</p>
+      <!-- Same quote, second impression, at the decision moment. WO-06. -->
+      <p class="small" style="margin-top:var(--s24)" data-rise>"One of my go-to people in the audio industry." <span style="color:var(--ink);font-weight:600">Jenny Barber</span>, Program Manager, Podcasts, REI Co-op</p>
     </div>
 
     <!--
