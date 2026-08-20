@@ -210,35 +210,64 @@ body{
    ========================================================================== */
 .topbar{
   position:fixed;top:0;left:0;right:0;z-index:50;
-  background:rgba(248,244,238,.92);
-  -webkit-backdrop-filter:saturate(180%) blur(12px);
-          backdrop-filter:saturate(180%) blur(12px);
-  border-bottom:1px solid var(--line);
+  background:transparent;border-bottom:1px solid transparent;
   transform:translateY(-100%);
-  transition:transform 320ms var(--ease-rise);
+  transition:transform 320ms var(--ease-rise),
+             background-color 200ms ease-out,
+             border-color 200ms ease-out;
 }
 .topbar.is-visible{transform:translateY(0)}
+.topbar.is-scrolled{
+  background:rgba(248,244,238,.88);
+  -webkit-backdrop-filter:saturate(180%) blur(12px);
+          backdrop-filter:saturate(180%) blur(12px);
+  border-bottom-color:rgba(23,19,31,.10);
+}
 .topbar__inner{
   display:flex;align-items:center;justify-content:space-between;gap:var(--s24);
-  padding-block:12px;
+  /* Height animates via padding only, so the bar never shifts page layout. */
+  padding-block:14px;
+  transition:padding-block 200ms ease-out;
 }
+.topbar.is-scrolled .topbar__inner{padding-block:8px}
+.topbar__id{min-width:0}
 .topbar__name{
   font-family:var(--display);font-weight:700;font-size:18px;
   letter-spacing:-.01em;line-height:1.2;display:block;
+  white-space:nowrap;overflow:hidden;text-overflow:ellipsis;
 }
 .topbar__cred{
-  display:block;font-size:13px;line-height:1.3;color:var(--slate);
-  margin-top:2px;
+  display:block;position:relative;height:18px;margin-top:2px;
+  font-size:13px;line-height:1.35;color:var(--slate);
 }
+.rot{
+  position:absolute;inset:0;white-space:nowrap;overflow:hidden;
+  text-overflow:ellipsis;opacity:0;transition:opacity 400ms ease-out;
+}
+.rot.is-on{opacity:1}
 .topbar .btn{padding:12px 22px;font-size:15px;flex:0 0 auto}
-@media (max-width:900px){
+.topbar__cta-short{display:none}
+
+/* scrub-progress (motion #9). An indicator, not decoration, so it keeps
+   working under reduced motion. */
+.scrub{position:absolute;left:0;right:0;bottom:0;height:2px;overflow:hidden}
+.scrub i{
+  display:block;height:100%;width:100%;
+  background:var(--magenta-hot);
+  transform:scaleX(0);transform-origin:left;
+}
+
+@media (max-width:720px){
+  .topbar__inner{padding-block:9px}
+  .topbar.is-scrolled .topbar__inner{padding-block:7px}
   .topbar__cred{display:none}
-  .topbar__name{font-size:16px}
-  .topbar .btn{padding:11px 18px;font-size:14px}
-  .topbar__inner{padding-block:10px}
+  .topbar__name{font-size:15px}
+  .topbar__cta-long{display:none}
+  .topbar__cta-short{display:inline}
+  .topbar .btn{padding:0 18px;font-size:15px;min-height:44px;min-width:44px}
 }
 @media (prefers-reduced-motion:reduce){
-  .topbar{transition:none}
+  .topbar,.topbar__inner,.rot{transition:none}
 }
 
 /* ==========================================================================
@@ -396,7 +425,10 @@ body{
 }
 .numbers__cell:first-child{padding-left:0}
 .numbers__cell:last-child{border-right:0;padding-right:0}
-.numbers__fig{color:var(--magenta-hot);font-size:clamp(56px,6.2vw,96px)}
+.numbers__fig{
+  color:var(--magenta-hot);font-size:clamp(56px,6.2vw,96px);
+  font-variant-numeric:tabular-nums;font-feature-settings:"tnum" 1;
+}
 .numbers__label{margin-top:var(--s16);max-width:22ch}
 
 /* ==========================================================================
@@ -440,6 +472,7 @@ body{
 }
 .receipt__body{margin-top:var(--s12);color:rgba(255,255,255,.82);max-width:52ch}
 .receipt--wide{grid-column:1/-1}
+@media (min-width:900px){.receipt--wide{grid-template-columns:190px minmax(0,1fr)}}
 
 /* Now sits on bone, not inside the violet fill, so it takes ink/slate. The
    previous hardcoded white would have rendered invisible here. */
@@ -644,6 +677,228 @@ body{
 .book{align-items:start}
 
 /* ==========================================================================
+   OFFER LADDER — WO-11
+   Unequal by design: a ladder reads as a progression, three equal columns
+   read as a menu you have to parse. Four type levels per card so the eye
+   scans instead of reads.
+   ========================================================================== */
+.ladder{margin-top:var(--s64);display:grid;gap:var(--s24);align-items:start}
+@media (min-width:980px){
+  .ladder{grid-template-columns:40fr 30fr 30fr;gap:var(--s32);position:relative}
+  /* connector: reads as one progression rather than three separate offers */
+  .ladder::before{
+    content:"";position:absolute;top:96px;left:6%;right:6%;
+    height:1px;background:var(--line);z-index:0;
+  }
+}
+.tier{
+  position:relative;z-index:1;
+  background:var(--paper);border:1px solid var(--line);
+  border-radius:var(--r-card);padding:var(--s32);
+  transition:transform 160ms ease-out,border-color 160ms ease-out;
+}
+.tier:hover,.tier:focus-within{transform:translateY(-3px);border-color:var(--magenta)}
+.tier--lead{
+  border:2px solid var(--magenta);
+  box-shadow:0 4px 20px rgba(23,19,31,.07);
+}
+.tier__flag{
+  position:absolute;top:-13px;right:var(--s24);
+  background:var(--magenta);color:#fff;
+  font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;
+  padding:5px 12px;border-radius:var(--r-pill);
+}
+.tier__name{
+  font-family:var(--display);font-weight:700;font-size:30px;
+  line-height:1.15;letter-spacing:-.02em;margin-top:var(--s16);
+}
+.tier__desc{
+  font-style:italic;font-size:19px;line-height:1.4;
+  color:var(--slate);margin-top:var(--s12);
+}
+.tier__list{margin-top:var(--s24)}
+.tier__list li{
+  padding-block:var(--s12);border-top:1px solid var(--line);
+  font-size:17px;line-height:1.5;
+}
+.tier__list li:first-child{border-top:0;padding-top:0}
+
+.audit{margin-top:var(--s32);border-top:1px solid var(--line);padding-top:var(--s24)}
+.audit summary{
+  font-family:var(--display);font-weight:600;font-size:19px;
+  cursor:pointer;list-style:none;display:flex;align-items:center;gap:var(--s12);
+}
+.audit summary::-webkit-details-marker{display:none}
+.audit summary::before{
+  content:"";width:9px;height:9px;flex:0 0 auto;
+  border-right:2px solid var(--magenta);border-bottom:2px solid var(--magenta);
+  transform:rotate(45deg);transition:transform 180ms ease-out;
+}
+.audit[open] summary::before{transform:rotate(225deg)}
+.audit summary:focus-visible{outline:2px solid var(--ink);outline-offset:3px;border-radius:4px}
+.audit__list{margin-top:var(--s24)}
+.audit__list li{
+  position:relative;padding-left:32px;padding-block:var(--s8);
+  font-size:16px;line-height:1.5;color:var(--slate);
+}
+.audit__list li::before{
+  content:"";position:absolute;left:4px;top:14px;
+  width:11px;height:6px;border-left:2px solid var(--magenta);
+  border-bottom:2px solid var(--magenta);transform:rotate(-45deg);
+}
+.audit__plats{display:flex;flex-wrap:wrap;align-items:center;gap:var(--s16);margin-top:var(--s16)}
+.audit__plats img{height:20px;width:auto;filter:grayscale(1);opacity:.55}
+.audit__cap{display:block;margin-top:var(--s8);font-size:13px;color:var(--slate)}
+.ladder__note{margin-top:var(--s48);text-align:center;max-width:56ch;margin-inline:auto}
+
+@media (max-width:979px){
+  .tier{padding:var(--s24)}
+  .audit__plats img{height:18px}
+}
+
+/* ==========================================================================
+   WORK MODULE — WO-08. Now on ink, so the show art carries the section.
+   ========================================================================== */
+.work__sub{margin-top:var(--s24);color:rgba(248,244,238,.72);max-width:52ch}
+.fill-ink .show{background:rgba(255,255,255,.05);border-color:rgba(255,255,255,.14)}
+.fill-ink .show h3{color:var(--bone)}
+.fill-ink .show__meta{color:var(--bone)}
+.show__lead{
+  margin-top:var(--s16);font-family:var(--display);font-weight:600;
+  font-size:22px;line-height:1.3;letter-spacing:-.01em;color:var(--bone);
+}
+.fill-ink .show__role{color:rgba(248,244,238,.62);font-size:15px;margin-top:var(--s16)}
+.work__also{margin-top:var(--s96)}
+
+/* Tier 2: visually subordinate to the two weekly shows. Titles are always
+   visible — no hover-only content, and nothing to tap to reveal. */
+.trusted{
+  margin-top:var(--s24);
+  display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:var(--s24);
+}
+.trusted li{background:none;border-radius:0;overflow:visible}
+.trusted img{
+  width:100%;aspect-ratio:1/1;object-fit:cover;display:block;
+  border-radius:12px;opacity:.68;transition:opacity 200ms ease-out;
+}
+.trusted li:hover img,.trusted li:focus-within img{opacity:1}
+.trusted span{
+  display:block;margin-top:var(--s12);
+  font-size:13px;line-height:1.35;color:rgba(248,244,238,.62);
+}
+
+/* ==========================================================================
+   CREDENTIALS RAIL — WO-09
+   ========================================================================== */
+.rail{
+  margin-top:var(--s48);
+  display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:var(--s32);
+}
+.rail--training{
+  margin-top:var(--s64);padding-top:var(--s48);
+  border-top:1px solid rgba(255,255,255,.24);
+  grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--s64);max-width:760px;
+}
+.rail__item{min-width:0}
+.rail__badge{width:72px;height:72px;object-fit:contain;border-radius:8px;background:#fff;padding:4px}
+/* Type stands in wherever no official asset exists. Never a drawn lookalike. */
+.rail__type{
+  font-family:var(--display);font-weight:800;font-size:26px;line-height:1;
+  letter-spacing:-.02em;color:rgba(255,255,255,.7);height:72px;
+  display:flex;align-items:center;
+}
+.rail__type--lg{font-size:34px;height:96px;color:rgba(255,255,255,.78)}
+/* Multi-colour marks sit on a plate rather than being knocked out to white. */
+.rail__plate{
+  width:96px;height:96px;background:rgba(255,255,255,.92);
+  border-radius:12px;display:grid;place-items:center;padding:12px;
+}
+.rail__plate img{width:100%;height:100%;object-fit:contain}
+.rail__name{
+  margin-top:var(--s16);font-size:15px;font-weight:600;line-height:1.3;color:#fff;
+}
+.rail__name--lg{font-size:18px}
+.rail__meta{margin-top:4px;font-size:13px;line-height:1.35;color:rgba(255,255,255,.9)}
+.rail__foot{margin-top:var(--s48);color:rgba(255,255,255,.78)}
+
+@media (max-width:900px){
+  .trusted{grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--s16)}
+  .work__also{margin-top:var(--s64)}
+  /* Horizontal rail with a real affordance, and keyboard scrollable. */
+  .rail{
+    display:flex;gap:var(--s24);overflow-x:auto;scroll-snap-type:x mandatory;
+    padding-bottom:var(--s16);-webkit-overflow-scrolling:touch;
+  }
+  .rail__item{flex:0 0 168px;scroll-snap-align:start}
+  .rail--training{display:flex;max-width:none}
+  .rail--training .rail__item{flex:0 0 220px}
+  .rail:focus-visible{outline:2px solid #fff;outline-offset:4px}
+}
+
+/* ==========================================================================
+   RECEIPT MARKS v2 — WO-07b
+   Photographic marks get a plate and a radius; drawn marks stay borderless.
+   They match by optical weight, not by container.
+   ========================================================================== */
+.rbadge--art{
+  position:relative;width:76px;height:76px;border:0;background:none;
+  border-radius:0;overflow:visible;
+}
+.rbadge--art img{
+  width:60px;height:60px;border-radius:12px;object-fit:cover;
+  position:absolute;top:8px;left:8px;
+}
+.rbadge__gauge{position:absolute;inset:0;width:76px;height:76px;overflow:visible}
+
+/* Multi-colour / photographic third-party marks sit on a white plate rather
+   than being knocked out to white, which would be an alteration. */
+.rbadge--plate{
+  width:76px;height:76px;background:rgba(255,255,255,.92);
+  border:0;border-radius:12px;display:grid;place-items:center;padding:10px;
+}
+.rbadge--plate img{width:100%;height:auto;object-fit:contain}
+
+/* One dot per 100,000 downloads. States the magnitude instead of gesturing. */
+.dotfield{
+  width:76px;flex:0 0 auto;
+  display:grid;grid-template-columns:repeat(10,1fr);gap:4px;
+  align-content:start;padding-top:6px;
+}
+.dotfield span{
+  width:3px;height:3px;border-radius:50%;
+  background:rgba(255,255,255,.7);
+}
+
+/* ==========================================================================
+   DELTA BAR — WO-07c
+   ========================================================================== */
+.delta{flex:0 0 auto;width:190px}
+.delta__bars{
+  position:relative;display:flex;align-items:flex-end;gap:var(--s24);
+  height:96px;
+}
+.delta__col{flex:1;display:flex;flex-direction:column;justify-content:flex-end;height:100%}
+.delta__bar{width:100%;border-radius:4px 4px 0 0;transform-origin:bottom}
+.delta__bar--from{background:rgba(255,255,255,.45)}
+.delta__bar--to{background:var(--lime)}
+.delta__n{
+  font-family:var(--display);font-weight:700;font-size:15px;
+  color:#fff;margin-top:var(--s8);line-height:1.2;
+  font-variant-numeric:tabular-nums;
+}
+.delta__l{font-size:12px;color:rgba(255,255,255,.9);line-height:1.2;margin-top:2px}
+.delta__arc{position:absolute;inset:0;width:100%;height:100%;pointer-events:none}
+.delta__pct{
+  font-family:var(--display);font-weight:800;font-size:56px;line-height:1;
+  letter-spacing:-.03em;color:#fff;margin-top:var(--s24);
+  font-variant-numeric:tabular-nums;
+}
+@media (max-width:900px){
+  .delta{width:100%}
+  .delta__pct{font-size:44px}
+}
+
+/* ==========================================================================
    TESTIMONIAL — WO-06
    The only third-party voice on the page. Set as a statement, not a
    decorative pull-quote: real testimonials should look like someone said
@@ -751,6 +1006,10 @@ body.audit [data-verify]::after{
   .numbers__cell:nth-child(n+3){border-top:1px solid var(--line);margin-top:var(--s24)}
 
   .beat{grid-template-columns:1fr;gap:var(--s12);padding-block:var(--s32)}
+  section[style*="112px"]{padding-block:64px !important}
+  section[style*="136px"]{padding-block:72px !important}
+  section[style*="120px"]{padding-block:72px !important}
+  section[style*="88px"]{padding-block:56px !important}
   .receipt__fig{font-size:32px}
   .obj{grid-template-columns:1fr;gap:var(--s12)}
   .obj__q{font-size:32px}
@@ -809,13 +1068,26 @@ if ('IntersectionObserver' in window) {
      ====================================================================== -->
 <div class="topbar" id="topbar">
   <div class="container topbar__inner">
-    <div>
+    <div class="topbar__id">
       <span class="topbar__name">Sylvia Nopar Thomas</span>
-      <span class="topbar__cred">Producer, REI Co-op's <em>Wild Ideas Worth Living</em> and <em>Thrifty Traveler</em></span>
+      <!-- Proof rotator. aria-hidden: the bar's accessible name comes from the
+           static name, and rotating text must never be announced. -->
+      <span class="topbar__cred" id="rotator" aria-hidden="true">
+        <span class="rot is-on">Producer, REI Co-op&rsquo;s <em>Wild Ideas Worth Living</em></span>
+        <span class="rot">6M+ downloads produced</span>
+        <span class="rot">85% episode completion</span>
+      </span>
     </div>
-    <a class="btn btn--primary" href="#contact">Book the intro call</a>
+    <a class="btn btn--primary topbar__cta" href="#contact">
+      <span class="topbar__cta-long">Book the intro call</span>
+      <span class="topbar__cta-short">Book a call</span>
+    </a>
   </div>
+  <div class="scrub" aria-hidden="true"><i id="scrub-bar"></i></div>
 </div>
+<!-- Sentinel drives the topbar state change via IntersectionObserver rather
+     than a scroll listener reading scrollY every frame. -->
+<div id="topbar-sentinel" aria-hidden="true"></div>
 
 <!-- ======================================================================
      RECEIPT BADGE SPRITE
@@ -956,8 +1228,8 @@ if ('IntersectionObserver' in window) {
       </div>
 
       <div class="numbers__cell" data-rise>
-        <div class="stat numbers__fig">2015</div>
-        <p class="small numbers__label">Working professionally in audio since. In radio since she was eighteen.</p>
+        <div class="stat numbers__fig"><span data-count="10" data-suffix=" yrs">10 yrs</span></div>
+        <p class="small numbers__label">Working professionally in audio. In radio since she was eighteen.</p>
       </div>
 
     </div>
@@ -984,9 +1256,10 @@ if ('IntersectionObserver' in window) {
 </section>
 
 <!-- ======================================================================
-     4. SOLUTION — four beats
+     4. SOLUTION — Problem and Solution were both bone at 128px, which breaks
+     the no-adjacent-match rule. Rhythm table puts this at 112 / 64.
      ====================================================================== -->
-<section class="section">
+<section class="section" style="padding-block:112px">
   <div class="container">
     <p class="eyebrow" data-rise>What working together looks like</p>
     <h2 class="h2 measure-h2" data-rise>I've spent a decade in the tape and in the numbers.</h2>
@@ -1066,15 +1339,44 @@ if ('IntersectionObserver' in window) {
     <div class="receipts">
 
       <div class="receipt" data-rise data-claim="completion-wiwl">
-        <div class="rbadge"><svg><use href="#i-completion"/></svg></div>
+        <div class="rbadge rbadge--art">
+            <img src="images/wiwl-key-art.jpg" alt="Wild Ideas Worth Living" loading="lazy" width="128" height="128">
+            <svg class="rbadge__gauge" viewBox="0 0 76 76" aria-hidden="true">
+              <circle cx="38" cy="38" r="35.5" fill="none" stroke="rgba(255,255,255,.25)" stroke-width="3"/>
+              <circle cx="38" cy="38" r="35.5" fill="none" stroke="var(--lime)" stroke-width="3"
+                      stroke-linecap="round" stroke-dasharray="189.5 223" transform="rotate(-90 38 38)"/>
+            </svg>
+          </div>
         <div>
           <p class="receipt__fig"><span data-count="55" data-suffix="%">55%</span> to <span data-count="85" data-suffix="%">85%</span> completion.</p>
           <p class="receipt__body"><em>Wild Ideas Worth Living</em> went from roughly 55 to 60 percent completion to around 85 percent over the time I've worked on it. In podcasting, 80 percent and up is exceptional. Getting there was a deliberate goal, not luck.</p>
         </div>
       </div>
 
-      <div class="receipt" data-rise data-claim="growth-tt">
-        <div class="rbadge"><svg><use href="#i-growth"/></svg></div>
+      <!-- WO-07c. Two bars, because there are exactly two verified data points.
+           No interpolated curve: on a page selling "I'll tell you the truth
+           about your numbers", a decorative trend line is disqualifying. The
+           delta figure is the trend. -->
+      <div class="receipt receipt--wide" data-rise data-claim="growth-tt">
+        <div class="delta">
+          <div class="delta__bars">
+            <div class="delta__col">
+              <div class="delta__bar delta__bar--from" style="height:58%"></div>
+              <p class="delta__n">29,000</p><p class="delta__l">Start</p>
+            </div>
+            <div class="delta__col">
+              <div class="delta__bar delta__bar--to" style="height:100%"></div>
+              <p class="delta__n">50,000</p><p class="delta__l">~90 days</p>
+            </div>
+            <svg class="delta__arc" viewBox="0 0 120 90" aria-hidden="true" preserveAspectRatio="none">
+              <path d="M14 46 C46 6, 74 6, 106 4" fill="none" stroke="var(--magenta-hot)"
+                    stroke-width="2.5" stroke-linecap="round"/>
+              <path d="M106 4 99 9 M106 4 100 12" fill="none" stroke="var(--magenta-hot)"
+                    stroke-width="2.5" stroke-linecap="round"/>
+            </svg>
+          </div>
+          <p class="delta__pct"><span data-count="72" data-suffix="%">+72%</span></p>
+        </div>
         <div>
           <p class="receipt__fig">29,000 to 50,000 listens in about 90 days.</p>
           <p class="receipt__body">That's <em>Thrifty Traveler</em>, after we put a real growth plan in place. It's held that level since and it's still climbing.</p>
@@ -1082,7 +1384,14 @@ if ('IntersectionObserver' in window) {
       </div>
 
       <div class="receipt" data-rise data-claim="consumption-tt">
-        <div class="rbadge"><svg><use href="#i-consumption"/></svg></div>
+        <div class="rbadge rbadge--art">
+            <img src="images/thrifty-traveler-key-art.jpeg" alt="The Thrifty Traveler Podcast" loading="lazy" width="128" height="128">
+            <svg class="rbadge__gauge" viewBox="0 0 76 76" aria-hidden="true">
+              <circle cx="38" cy="38" r="35.5" fill="none" stroke="rgba(255,255,255,.25)" stroke-width="3"/>
+              <circle cx="38" cy="38" r="35.5" fill="none" stroke="#fff" stroke-width="3"
+                      stroke-linecap="round" stroke-dasharray="178.4 223" transform="rotate(-90 38 38)"/>
+            </svg>
+          </div>
         <div>
           <p class="receipt__fig">An 80 percent plus consumption rate on <em>Thrifty Traveler</em>.</p>
           <p class="receipt__body">People don't just press play. They stay.</p>
@@ -1098,14 +1407,80 @@ if ('IntersectionObserver' in window) {
       </div>
 
       <div class="receipt" data-rise data-claim="apple-chart">
-        <div class="rbadge"><svg><use href="#i-chart"/></svg></div>
+        <div class="rbadge rbadge--plate">
+            <!-- Apple mark unmodified and uncombined: their guidelines forbid
+                 building it into a custom badge or lockup. The rank is type. -->
+            <img src="images/platform-apple-podcasts.png" alt="Apple Podcasts" loading="lazy">
+          </div>
         <div>
           <p class="receipt__fig">Top 10 travel podcasts on Apple Podcasts.</p>
+          <p class="receipt__body">United States.</p>
         </div>
       </div>
 
       <div class="receipt" data-rise data-claim="downloads-wiwl">
-        <div class="rbadge"><svg><use href="#i-downloads"/></svg></div>
+        <div class="dotfield" aria-hidden="true">
+              <span></span>
+              <span></span>
+              <span></span>
+              <span></span>
+              <span></span>
+              <span></span>
+              <span></span>
+              <span></span>
+              <span></span>
+              <span></span>
+              <span></span>
+              <span></span>
+              <span></span>
+              <span></span>
+              <span></span>
+              <span></span>
+              <span></span>
+              <span></span>
+              <span></span>
+              <span></span>
+              <span></span>
+              <span></span>
+              <span></span>
+              <span></span>
+              <span></span>
+              <span></span>
+              <span></span>
+              <span></span>
+              <span></span>
+              <span></span>
+              <span></span>
+              <span></span>
+              <span></span>
+              <span></span>
+              <span></span>
+              <span></span>
+              <span></span>
+              <span></span>
+              <span></span>
+              <span></span>
+              <span></span>
+              <span></span>
+              <span></span>
+              <span></span>
+              <span></span>
+              <span></span>
+              <span></span>
+              <span></span>
+              <span></span>
+              <span></span>
+              <span></span>
+              <span></span>
+              <span></span>
+              <span></span>
+              <span></span>
+              <span></span>
+              <span></span>
+              <span></span>
+              <span></span>
+              <span></span>
+          </div>
         <div>
           <p class="receipt__fig">Over 6 million downloads</p>
           <p class="receipt__body">for <em>Wild Ideas Worth Living</em>.</p>
@@ -1117,6 +1492,7 @@ if ('IntersectionObserver' in window) {
         <div>
           <p class="receipt__fig">A Shorty Award that nobody would have won, because nobody would have entered.</p>
           <p class="receipt__body">I spotted the category, ran the submission, and the show won it.</p>
+          <p class="small" style="margin-top:12px;color:rgba(255,255,255,.88)"><em>The Thrifty Traveler Podcast</em> &middot; 18th Annual Shorty Awards &middot; Winner and Audience Honor, Other Podcast Genres</p>
         </div>
       </div>
 
@@ -1125,88 +1501,123 @@ if ('IntersectionObserver' in window) {
 </section>
 
 <!-- ======================================================================
-     THE SHOWS — lifted out of the violet band, which was carrying 16 claims
-     across 3.6 mobile screens of one hue and had stopped reading as evidence.
+     THE WORK — WO-08. Merges the former "two shows" and "Shows I've worked
+     with" sections. They were two adjacent credibility surfaces, neither
+     cumulative, which is why the eight-show grid read as an afterthought.
+     One module, two ranked tiers: depth and focus in a single glance.
+
+     The count "Ten" is 2 + 8 and is confirmed by Travis, 20 Aug 2026.
      ====================================================================== -->
-<section class="section">
+<section class="section fill-ink" style="padding-block:112px">
   <div class="container">
     <p class="eyebrow" data-rise>The work</p>
-    <h2 class="h2 measure-h2" data-rise>The two shows I'm in every week.</h2>
+    <h2 class="h2 measure-h2" data-rise>Ten shows. Two of them every single week.</h2>
+    <p class="lead work__sub" data-rise>The weekly work is where the craft lives. The rest is where the range is.</p>
 
     <div class="shows">
       <article class="show" data-rise data-claim="rei-naming">
         <div class="show__art">
-          <img src="images/wiwl-key-art.jpg" alt="Wild Ideas Worth Living cover art, produced by REI Co-op Studios" width="600" height="600" loading="lazy">
+          <img src="images/wiwl-key-art.jpg" alt="Wild Ideas Worth Living cover art, produced by REI Co-op Studios" width="600" height="600" loading="lazy" decoding="async">
         </div>
         <div class="show__body">
-          <p class="eyebrow show__meta">REI Co-op</p>
+          <p class="eyebrow show__meta">REI Co-op &middot; weekly</p>
           <h3><em>Wild Ideas Worth Living</em></h3>
-          <p class="show__role">Producer, end to end. I research and pitch guests, run pre-interviews, sit in on the interview and ask the follow-ups, go through the tape to find the story, write scripts for the ear, work through rounds of editorial feedback, then build the episode with music and sound design.</p>
+          <p class="show__lead">Took episode completion from roughly 55% to 85%, and kept the show sounding like itself.</p>
+          <p class="show__role">Producer, end to end: guest research, pre-interviews, finding the story in the tape, writing for the ear, editorial rounds, mix and sound design.</p>
         </div>
       </article>
 
       <article class="show" data-rise>
         <div class="show__art">
-          <img src="images/thrifty-traveler-key-art.jpeg" alt="The Thrifty Traveler Podcast cover art" width="600" height="600" loading="lazy">
+          <img src="images/thrifty-traveler-key-art.jpeg" alt="The Thrifty Traveler Podcast cover art" width="600" height="600" loading="lazy" decoding="async">
         </div>
         <div class="show__body">
-          <p class="eyebrow show__meta">Thrifty Traveler</p>
+          <p class="eyebrow show__meta">Thrifty Traveler &middot; weekly</p>
           <h3><em>Thrifty Traveler</em></h3>
-          <p class="show__role">Production, growth and strategy. I'm at the recordings, I handle mixing and production edits, and I review performance and chase the larger industry opportunities the team doesn't have time to go after.</p>
+          <p class="show__lead">29,000 to 50,000 listens in about 90 days, plus a live show that sold almost 300 tickets.</p>
+          <p class="show__role">Production, growth and strategy: recordings, mixing, production edits, performance review, and the industry opportunities the team has no time to chase.</p>
         </div>
       </article>
     </div>
 
-    <div class="platforms" data-rise>
-      <p class="eyebrow">Grown across every platform the show lives on</p>
-      <ul class="platforms__row">
-        <li><img src="images/platform-apple-podcasts.png" alt="Apple Podcasts" loading="lazy"></li>
-        <li><img src="images/platform-spotify.png" alt="Spotify" loading="lazy"></li>
-        <li><img src="images/platform-youtube.png" alt="YouTube" loading="lazy"></li>
-        <li><img src="images/platform-amazon-music.png" alt="Amazon Music" loading="lazy"></li>
-        <li><img src="images/platform-castbox.png" alt="Castbox" loading="lazy"></li>
-      </ul>
-    </div>
-
-    <div class="credmeta">
-      <div data-rise data-claim="awards-list">
-        <p class="eyebrow">Awards for <em>Wild Ideas Worth Living</em></p>
-        <ul>
-          <li>2024 W3 Awards, Best in Show, Lifestyle</li>
-          <li>2024 W3 Awards, two Silver Awards, Lifestyle and Sports</li>
-          <li>2022 Signal Awards, Silver, Best Branded Podcast</li>
-          <li>2025 Shorty Awards, finalist in two categories, Bronze for Branded Podcast</li>
-        </ul>
-        <img class="badge" src="images/w3-winner-badge.jpg" alt="W3 Awards winner badge" width="132" height="132" loading="lazy">
-      </div>
-
-      <div data-rise>
-        <p class="eyebrow">Background</p>
-        <p>Working in audio professionally since 2015. Graduate certificate in documentary studies from the Salt Institute for Documentary Studies. Thomas J. Watson Fellow, 2014 to 2015.</p>
-      </div>
-    </div>
+    <p class="eyebrow work__also" data-rise>Also worked with</p>
+    <ul class="trusted" data-claim="past-shows">
+      <li data-rise><img src="images/show-unstoppable-kara-goldin.jpeg" alt="Unstoppable with Kara Goldin" loading="lazy" decoding="async"><span>Unstoppable with Kara Goldin</span></li>
+      <li data-rise><img src="images/show-terri-cole.webp" alt="The Terri Cole Show" loading="lazy" decoding="async"><span>The Terri Cole Show</span></li>
+      <li data-rise><img src="images/show-rant-with-baeth.webp" alt="The Rant with Baeth" loading="lazy" decoding="async"><span>The Rant with Baeth</span></li>
+      <li data-rise><img src="images/show-shes-got-moxie.webp" alt="She's Got Moxie" loading="lazy" decoding="async"><span>She's Got Moxie</span></li>
+      <li data-rise><img src="images/show-power-of-the-only.webp" alt="The Power of the Only" loading="lazy" decoding="async"><span>The Power of the Only</span></li>
+      <li data-rise><img src="images/show-life-gets-real.webp" alt="Life Gets Real" loading="lazy" decoding="async"><span>Life Gets Real</span></li>
+      <li data-rise><img src="images/show-beauty-biz.jpeg" alt="The Beauty Biz Show" loading="lazy" decoding="async"><span>The Beauty Biz Show</span></li>
+      <li data-rise><img src="images/show-ask-dr-ben.webp" alt="Ask Dr. Ben" loading="lazy" decoding="async"><span>Ask Dr. Ben</span></li>
+    </ul>
   </div>
 </section>
 
 <!-- ======================================================================
-     TRUSTED BY — past shows. Deliberately no per-show role, date or result:
-     none is on file, and an unsupported claim next to someone else's cover art
-     is the one thing this page cannot afford. See F5.
+     CREDENTIALS — WO-09. Second and final violet band, non-adjacent to the
+     Receipts and structurally different from it: a rail, not a card grid.
+     Awards were a plain list, the W3 badge floated alone, and the Salt and
+     Watson credentials were buried in a paragraph nobody reaches.
+
+     No invented badges. Where an official asset is not in the repo the award
+     is set in type, because a fabricated award badge is the single most
+     damaging asset that could appear on this page.
      ====================================================================== -->
-<section class="section section--tight fill-ink">
+<section class="section fill-violet" style="padding-block:88px">
   <div class="container">
-    <p class="eyebrow" data-rise>Trusted by</p>
-    <h2 class="h2 measure-h2" data-rise>Shows I've worked with.</h2>
-    <ul class="trusted" data-claim="past-shows">
-      <li data-rise><img src="images/show-unstoppable-kara-goldin.jpeg" alt="Unstoppable with Kara Goldin" loading="lazy"></li>
-      <li data-rise><img src="images/show-terri-cole.webp" alt="The Terri Cole Show" loading="lazy"></li>
-      <li data-rise><img src="images/show-rant-with-baeth.webp" alt="The Rant with Baeth" loading="lazy"></li>
-      <li data-rise><img src="images/show-shes-got-moxie.webp" alt="She's Got Moxie" loading="lazy"></li>
-      <li data-rise><img src="images/show-power-of-the-only.webp" alt="The Power of the Only" loading="lazy"></li>
-      <li data-rise><img src="images/show-life-gets-real.webp" alt="Life Gets Real" loading="lazy"></li>
-      <li data-rise><img src="images/show-beauty-biz.jpeg" alt="The Beauty Biz Show" loading="lazy"></li>
-      <li data-rise><img src="images/show-ask-dr-ben.webp" alt="Ask Dr. Ben" loading="lazy"></li>
+    <p class="eyebrow" data-rise>Credentials</p>
+    <h2 class="h2" data-rise>Ten years of this, on the record.</h2>
+
+    <ul class="rail" data-rise data-claim="awards-list">
+      <li class="rail__item">
+        <img class="rail__badge" src="images/w3-winner-badge.jpg" alt="W3 Awards winner badge" width="144" height="144" loading="lazy">
+        <p class="rail__name">W3 Awards</p>
+        <p class="rail__meta">2024 &middot; Best in Show, Lifestyle</p>
+      </li>
+      <li class="rail__item">
+        <p class="rail__type">W3</p>
+        <p class="rail__name">W3 Awards</p>
+        <p class="rail__meta">2024 &middot; two Silver, Lifestyle and Sports</p>
+      </li>
+      <li class="rail__item">
+        <p class="rail__type">Signal</p>
+        <p class="rail__name">Signal Awards</p>
+        <p class="rail__meta">2022 &middot; Silver, Best Branded Podcast</p>
+      </li>
+      <li class="rail__item">
+        <p class="rail__type">Shorty</p>
+        <p class="rail__name">Shorty Awards</p>
+        <p class="rail__meta">17th &middot; Finalist, Lifestyle &amp; Entertainment</p>
+      </li>
+      <li class="rail__item">
+        <p class="rail__type">Shorty</p>
+        <p class="rail__name">Shorty Awards</p>
+        <p class="rail__meta">17th &middot; Bronze Honor, Branded Podcast</p>
+      </li>
+      <li class="rail__item">
+        <p class="rail__type">Shorty</p>
+        <p class="rail__name">Shorty Awards</p>
+        <p class="rail__meta">18th &middot; Winner, Other Podcast Genres</p>
+      </li>
     </ul>
+
+    <ul class="rail rail--training" data-rise>
+      <li class="rail__item">
+        <span class="rail__plate">
+          <img src="images/salt-institute-logo.jpg" alt="Salt Institute for Documentary Studies" width="192" height="192" loading="lazy">
+        </span>
+        <p class="rail__name rail__name--lg">Salt Institute for Documentary Studies</p>
+        <p class="rail__meta">Graduate certificate, documentary studies</p>
+      </li>
+      <li class="rail__item">
+        <p class="rail__type rail__type--lg">Watson</p>
+        <p class="rail__name rail__name--lg">Thomas J. Watson Fellowship</p>
+        <p class="rail__meta">Watson Fellow, 2014&ndash;2015</p>
+      </li>
+    </ul>
+
+    <p class="small rail__foot" data-rise>Working professionally in audio since 2015. In radio since she was eighteen.</p>
   </div>
 </section>
 
@@ -1225,35 +1636,67 @@ if ('IntersectionObserver' in window) {
 </section>
 
 <!-- ======================================================================
-     7. WHAT YOU CAN BOOK
+     WHAT YOU CAN BOOK — WO-11. Rebuilt as a decision ladder rather than three
+     equal columns. The audit contents fold into tier 1 as the answer to that
+     tier's own question, instead of competing with the tiers from their own
+     section. Platform logos land here, under checklist item 2, where they
+     mean something.
      ====================================================================== -->
-<section class="section">
+<section class="section" style="padding-block:136px">
   <div class="container">
     <p class="eyebrow" data-rise>What you can book</p>
     <h2 class="h2 measure-h2" data-rise>It almost always starts with an audit.</h2>
     <p class="lead measure" data-rise>Every engagement is scoped to what the show actually needs. The first move is finding out where you stand, whether that becomes a long relationship or stays a one-time project.</p>
 
-    <div class="book">
-      <div class="card" data-rise>
+    <div class="ladder">
+      <div class="tier tier--lead" data-rise>
+        <span class="tier__flag">Start here</span>
         <p class="eyebrow card__label">One-time</p>
-        <h3 class="h3">Start here</h3>
-        <ul>
+        <h3 class="tier__name">Start here</h3>
+        <p class="tier__desc">Find out where you actually stand.</p>
+        <ul class="tier__list">
           <li>A one-off podcast consulting session</li>
           <li>A comprehensive podcast audit</li>
           <li>An audit plus a strategic meeting on the findings</li>
         </ul>
+
+        <details class="audit" open>
+          <summary>What an audit actually covers</summary>
+          <ul class="audit__list">
+            <li>Close listening to episodes</li>
+            <li>
+              Your show across every platform
+              <span class="audit__plats">
+                <img src="images/platform-apple-podcasts.png" alt="Apple Podcasts" loading="lazy">
+                <img src="images/platform-spotify.png" alt="Spotify" loading="lazy">
+                <img src="images/platform-youtube.png" alt="YouTube" loading="lazy">
+                <img src="images/platform-amazon-music.png" alt="Amazon Music" loading="lazy">
+                <img src="images/platform-castbox.png" alt="Castbox" loading="lazy">
+              </span>
+              <span class="audit__cap">Every platform your show is on.</span>
+            </li>
+            <li>Backend, YouTube, average view duration, consumption and completion</li>
+            <li>Which episodes performed, and the patterns underneath &mdash; topic, format, storytelling, titles, presentation</li>
+            <li>Who your audience actually is</li>
+            <li>The low-hanging fruit you can change quickly, then a larger organic growth strategy</li>
+          </ul>
+        </details>
       </div>
-      <div class="card" data-rise>
+
+      <div class="tier" data-rise>
         <p class="eyebrow card__label">Packaged</p>
-        <h3 class="h3">A run of sessions</h3>
-        <ul>
+        <h3 class="tier__name">A run of sessions</h3>
+        <p class="tier__desc">Work the plan with support.</p>
+        <ul class="tier__list">
           <li>A consulting package, roughly five to ten sessions depending on the engagement</li>
         </ul>
       </div>
-      <div class="card" data-rise>
+
+      <div class="tier" data-rise>
         <p class="eyebrow card__label">Ongoing</p>
-        <h3 class="h3">In it with you</h3>
-        <ul>
+        <h3 class="tier__name">In it with you</h3>
+        <p class="tier__desc">I&rsquo;m on the show with you.</p>
+        <ul class="tier__list">
           <li>Quarterly consulting after an audit</li>
           <li>Ongoing podcast strategy</li>
           <li>Ongoing podcast production</li>
@@ -1261,10 +1704,7 @@ if ('IntersectionObserver' in window) {
       </div>
     </div>
 
-    <div class="book-note" data-rise>
-      <p><strong>What an audit actually covers.</strong> Close listening to episodes. Your show across every platform. Backend metrics, YouTube metrics, average view duration, consumption and completion rates. Which episodes performed and which didn't, and the patterns underneath that in topic, format, storytelling, titles and presentation. Who your audience actually is. Then the low-hanging fruit you can change quickly, and a larger organic growth strategy once those are handled.</p>
-      <p class="small">Pricing is a conversation, once I understand the show and the scope. It depends too much on what you need for a number here to mean anything.</p>
-    </div>
+    <p class="small ladder__note" data-rise>Pricing is a conversation, once I understand the show and the scope. It depends too much on what you need for a number here to mean anything.</p>
   </div>
 </section>
 
@@ -1506,19 +1946,80 @@ if ('IntersectionObserver' in window) {
     }, { threshold: 0 }).observe(wave);
   }
 
-  /* --- sticky header -----------------------------------------------------
-     Enters once the hero is past. The page is 19.7 screens on mobile and had
-     no way to act across ~93% of it, and her name and the REI credit did not
-     appear until screens 3.5 and 8.2.
+  /* --- sticky header, proof rotator, scrubber — WO-01 -------------------
+     State is driven by a sentinel, not by reading scrollY on every frame.
      -------------------------------------------------------------------- */
   var topbar = document.getElementById('topbar');
+  var sentinel = document.getElementById('topbar-sentinel');
   var heroEl = document.querySelector('.hero');
+
   if (topbar && heroEl && 'IntersectionObserver' in window) {
     new IntersectionObserver(function (entries) {
       entries.forEach(function (entry) {
         topbar.classList.toggle('is-visible', !entry.isIntersecting);
       });
     }, { rootMargin: '-40% 0px 0px 0px' }).observe(heroEl);
+  }
+
+  if (topbar && sentinel && 'IntersectionObserver' in window) {
+    sentinel.style.cssText = 'position:absolute;top:120px;height:1px;width:1px';
+    new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        topbar.classList.toggle('is-scrolled', !entry.isIntersecting);
+      });
+    }).observe(sentinel);
+  }
+
+  /* Proof rotator: 5s dwell, pauses on hover and on focus-within, frozen on
+     item 1 under reduced motion. */
+  var rots = document.querySelectorAll('#rotator .rot');
+  if (rots.length > 1 && !reduced) {
+    var ri = 0, paused = false;
+    topbar.addEventListener('mouseenter', function () { paused = true; });
+    topbar.addEventListener('mouseleave', function () { paused = false; });
+    topbar.addEventListener('focusin',   function () { paused = true; });
+    topbar.addEventListener('focusout',  function () { paused = false; });
+    setInterval(function () {
+      if (paused) return;
+      rots[ri].classList.remove('is-on');
+      ri = (ri + 1) % rots.length;
+      rots[ri].classList.add('is-on');
+    }, 5000);
+  }
+
+  /* Scrubber.
+     No requestAnimationFrame lock. The obvious implementation sets a `ticking`
+     flag and clears it inside a rAF callback — but rAF does not fire in a
+     hidden or backgrounded tab, so the flag stays true and the bar freezes
+     permanently the first time it is scrolled off-screen. Instead the max
+     scroll is cached, so the scroll handler only reads scrollY (no layout)
+     and writes one transform. Cheap enough to run uncoalesced. */
+  var bar = document.getElementById('scrub-bar');
+  if (bar) {
+    var maxScroll = 0;
+    var measure = function () {
+      maxScroll = document.documentElement.scrollHeight - window.innerHeight;
+      paint();
+    };
+    var paint = function () {
+      var r = maxScroll > 0 ? Math.min(Math.max(window.scrollY / maxScroll, 0), 1) : 0;
+      bar.style.transform = 'scaleX(' + r + ')';
+    };
+    window.addEventListener('scroll', paint, { passive: true });
+    window.addEventListener('resize', measure, { passive: true });
+    window.addEventListener('load', measure);
+    // Content can reflow after load (lazy images), so re-measure when it does.
+    if ('ResizeObserver' in window) {
+      new ResizeObserver(measure).observe(document.body);
+    }
+    measure();
+  }
+
+  /* Audit disclosure: open on desktop, closed below 900px, per WO-11. Set
+     here rather than in markup so it degrades open when JS is absent. */
+  var auditEl = document.querySelector('.audit');
+  if (auditEl && window.matchMedia('(max-width: 900px)').matches) {
+    auditEl.open = false;
   }
 
   /* --- contact form ------------------------------------------------------
