@@ -464,11 +464,14 @@ body{
 /* ==========================================================================
    18. MOTION — rise-in
    ========================================================================== */
-[data-rise]{
+/* Scoped to .js on purpose. If the script never runs — blocked, stripped by an
+   embed, deferred by a viewer — the page must still be fully readable. Content
+   is visible by default; the animation is the enhancement, not the baseline. */
+.js [data-rise]{
   opacity:0;transform:translateY(24px);
   transition:opacity 500ms var(--ease-rise), transform 500ms var(--ease-rise);
 }
-[data-rise].is-in{opacity:1;transform:none}
+.js [data-rise].is-in{opacity:1;transform:none}
 
 /* ==========================================================================
    19. AUDIT MODE — ?audit outlines every unverified claim
@@ -531,8 +534,8 @@ body.audit [data-verify]::after{
     transition-duration:.01ms !important;
     scroll-behavior:auto !important;
   }
-  [data-rise]{opacity:0;transform:none;transition:opacity 200ms linear}
-  [data-rise].is-in{opacity:1}
+  .js [data-rise]{opacity:0;transform:none;transition:opacity 200ms linear}
+  .js [data-rise].is-in{opacity:1}
   .ticker__track,.wave__a,.wave__b{animation:none}
   .btn:hover,.btn:active{transform:none}
 }
@@ -545,6 +548,25 @@ html{scroll-behavior:smooth}
   overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0;
 }
 </style>
+
+<script>
+/* Runs before first paint so there is no flash. Only opts into the rise-in
+   animation when the API that reveals the elements again is actually present.
+   No JS, no IntersectionObserver, no hiding — the page just renders. */
+if ('IntersectionObserver' in window) {
+  document.documentElement.className += ' js';
+
+  /* Failsafe. If the main script below never wires the observer — stripped by
+     an embed, blocked, or it threw — nothing would ever reveal the content and
+     the page would sit blank. Two seconds later, un-hide everything. */
+  setTimeout(function () {
+    if (!document.documentElement.hasAttribute('data-rise-active')) {
+      document.documentElement.className =
+        document.documentElement.className.replace(/\bjs\b/, '');
+    }
+  }, 2000);
+}
+</script>
 </head>
 
 <body>
@@ -971,12 +993,14 @@ html{scroll-behavior:smooth}
   /* --- footer year ------------------------------------------------------ */
   document.getElementById('year').textContent = new Date().getFullYear();
 
-  /* --- rise-in ---------------------------------------------------------- */
+  /* --- rise-in -----------------------------------------------------------
+     Only ever hidden when documentElement carries .js, which is set in the
+     head and only when IntersectionObserver exists. So if we are here without
+     it, nothing was hidden and there is nothing to reveal.
+     -------------------------------------------------------------------- */
   var risers = document.querySelectorAll('[data-rise]');
 
-  if (!('IntersectionObserver' in window)) {
-    risers.forEach(function (el) { el.classList.add('is-in'); });
-  } else {
+  if ('IntersectionObserver' in window) {
     var riseObserver = new IntersectionObserver(function (entries) {
       entries.forEach(function (entry) {
         if (!entry.isIntersecting) return;
@@ -994,6 +1018,9 @@ html{scroll-behavior:smooth}
     }, { threshold: 0.15 });
 
     risers.forEach(function (el) { riseObserver.observe(el); });
+
+    // Tell the head failsafe the observer is live, so it stands down.
+    document.documentElement.setAttribute('data-rise-active', '');
   }
 
   /* --- count-up --------------------------------------------------------- */

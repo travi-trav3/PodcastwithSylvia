@@ -58,6 +58,11 @@ problem in front of an editorially-minded audience that checks things.
   do not make a marquee.
 - **The capability ticker runs her disciplines, not client logos.**
 - **`sticky-proof` was not built.** The design direction marks it cut-first.
+- **The page never depends on JavaScript to be readable.** The `rise-in`
+  animation is scoped to a `.js` class set in the head, and a failsafe un-hides
+  everything after 2s if the main script never wires up. Scripts stripped,
+  blocked, or throwing all still render the full page. Verified in all three
+  paths — this matters for embeds, and for a live demo.
 
 ## Known copy/layout mismatch
 
