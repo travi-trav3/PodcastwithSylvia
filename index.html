@@ -18,6 +18,8 @@
   ============================================================================
 -->
 
+<link rel="icon" href="data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2032%2032%22%3E%3Crect%20width%3D%2232%22%20height%3D%2232%22%20rx%3D%227%22%20fill%3D%22%2317131F%22%2F%3E%3Crect%20x%3D%2212.4%22%20y%3D%225.5%22%20width%3D%227.2%22%20height%3D%2212.4%22%20rx%3D%223.6%22%20fill%3D%22%23C8F04A%22%2F%3E%3Cpath%20d%3D%22M8.8%2015.2a7.2%207.2%200%200%200%2014.4%200M16%2022.6V26.4M12.4%2026.4h7.2%22%20fill%3D%22none%22%20stroke%3D%22%23C8F04A%22%20stroke-width%3D%222.2%22%20stroke-linecap%3D%22round%22%2F%3E%3C%2Fsvg%3E">
+<meta name="theme-color" content="#F8F4EE">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600..800&family=Instrument+Sans:wght@400..600&display=swap" rel="stylesheet">
@@ -33,6 +35,10 @@
   --ink:     #17131F;
   --slate:   #5B5468;
   --magenta: #E8336D;
+  /* CTA fill. #E8336D under white is 4.10:1 and fails AA at button sizes, so
+     the interactive fill darkens and #E8336D keeps the spike/rule/large-display
+     role it reads best in. */
+  --magenta-deep: #C9245C;
   --violet:  #4A2CE0;
   --lime:    #C8F04A;
   --peach:   #FFD9C7;
@@ -167,8 +173,8 @@ body{
   transition:transform 160ms ease-out, background-color 160ms ease-out,
              border-color 160ms ease-out, color 160ms ease-out;
 }
-.btn--primary{background:var(--magenta);color:#fff}
-.btn--primary:hover{background:#D42A61;transform:translateY(-2px)}
+.btn--primary{background:var(--magenta-deep);color:#fff}
+.btn--primary:hover{background:#A81B4B;transform:translateY(-2px)}
 .btn--primary:active{transform:translateY(0);transition-duration:80ms}
 
 .btn--outline{background:transparent;color:var(--ink);border-color:var(--ink)}
@@ -193,6 +199,120 @@ body{
 .link:focus-visible{outline:2px solid currentColor;outline-offset:3px;border-radius:2px}
 
 /* ==========================================================================
+   5b. STICKY HEADER
+   Enters after the hero. Carries the three things the page otherwise makes you
+   scroll for: who she is, who she produces for, and a way to act.
+   ========================================================================== */
+.topbar{
+  position:fixed;top:0;left:0;right:0;z-index:50;
+  background:rgba(248,244,238,.92);
+  -webkit-backdrop-filter:saturate(180%) blur(12px);
+          backdrop-filter:saturate(180%) blur(12px);
+  border-bottom:1px solid var(--line);
+  transform:translateY(-100%);
+  transition:transform 320ms var(--ease-rise);
+}
+.topbar.is-visible{transform:translateY(0)}
+.topbar__inner{
+  display:flex;align-items:center;justify-content:space-between;gap:var(--s24);
+  padding-block:12px;
+}
+.topbar__name{
+  font-family:var(--display);font-weight:700;font-size:18px;
+  letter-spacing:-.01em;line-height:1.2;display:block;
+}
+.topbar__cred{
+  display:block;font-size:13px;line-height:1.3;color:var(--slate);
+  margin-top:2px;
+}
+.topbar .btn{padding:12px 22px;font-size:15px;flex:0 0 auto}
+@media (max-width:900px){
+  .topbar__cred{display:none}
+  .topbar__name{font-size:16px}
+  .topbar .btn{padding:11px 18px;font-size:14px}
+  .topbar__inner{padding-block:10px}
+}
+@media (prefers-reduced-motion:reduce){
+  .topbar{transition:none}
+}
+
+/* ==========================================================================
+   5c. RECEIPT BADGES
+   Custom marks, not third-party logos. Where a receipt contains real numbers
+   the mark plots those numbers; where it doesn't, it stays an icon rather than
+   implying data she hasn't got.
+   ========================================================================== */
+.rbadge{
+  width:56px;height:56px;flex:0 0 auto;
+  border-radius:14px;
+  background:rgba(255,255,255,.10);
+  border:1px solid rgba(255,255,255,.22);
+  display:grid;place-items:center;
+}
+.rbadge svg{width:32px;height:32px;display:block;overflow:visible}
+.rbadge .st{fill:none;stroke:var(--lime);stroke-width:2.25;
+  stroke-linecap:round;stroke-linejoin:round}
+.rbadge .st-dim{fill:none;stroke:rgba(255,255,255,.45);stroke-width:2.25;
+  stroke-linecap:round;stroke-linejoin:round}
+.rbadge .fl{fill:var(--lime)}
+.rbadge .fl-dim{fill:rgba(255,255,255,.45)}
+.rbadge .tx{
+  fill:var(--lime);font-family:var(--display);font-weight:800;
+  font-size:13px;text-anchor:middle;
+}
+
+/* ==========================================================================
+   5d. SHOWS
+   ========================================================================== */
+.shows{margin-top:var(--s64);display:grid;gap:var(--s32)}
+@media (min-width:900px){.shows{grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--s48)}}
+.show{
+  background:var(--paper);border:1px solid var(--line);
+  border-radius:var(--r-card);overflow:hidden;
+  display:flex;flex-direction:column;
+}
+.show__art{
+  aspect-ratio:1/1;width:100%;background:var(--line);
+  display:grid;place-items:center;overflow:hidden;
+}
+.show__art img{width:100%;height:100%;object-fit:cover}
+/* Typographic stand-in where no cleared cover art exists. Deliberately not a
+   fake of the real artwork. */
+.show__art--type{
+  background:var(--ink);padding:var(--s32);
+  text-align:center;
+}
+.show__art--type span{
+  font-family:var(--display);font-weight:800;color:var(--bone);
+  font-size:clamp(28px,4.4vw,44px);line-height:.98;letter-spacing:-.02em;
+  display:block;
+}
+.show__art--type em{
+  display:block;font-style:normal;color:var(--lime);
+  font-size:13px;letter-spacing:.10em;text-transform:uppercase;
+  font-family:var(--body);font-weight:600;margin-top:var(--s16);
+}
+.show__body{padding:var(--s32);flex:1}
+/* Same rule as .card__label: magenta at 13px is 4.10:1 and fails AA.
+   The colour rides the rule, the text is ink. */
+.show__meta{color:var(--ink);font-weight:600;display:flex;align-items:center;gap:var(--s8)}
+.show__meta::before{content:"";width:18px;height:2px;background:var(--magenta);flex:0 0 auto}
+.show h3{margin-top:var(--s12);font-size:26px}
+.show__role{margin-top:var(--s16);color:var(--slate);font-size:17px;line-height:1.6}
+.shows-note{margin-top:var(--s32);max-width:62ch}
+@media (max-width:900px){.show__body{padding:var(--s24)}}
+
+/* ==========================================================================
+   5e. THE PROMISE — beat 04 given its own moment
+   ========================================================================== */
+.promise{text-align:left}
+.promise .h2{max-width:16ch}
+.promise p{
+  margin-top:var(--s24);font-size:22px;line-height:1.5;
+  max-width:52ch;color:var(--ink);
+}
+
+/* ==========================================================================
    6. HERO
    ========================================================================== */
 .hero{position:relative;overflow:hidden}
@@ -209,10 +329,12 @@ body{
 }
 
 /* wave-idle — lime spike 2 of 3 */
+/* Sits below the copy column. It previously ran a 2.5px stroke straight
+   through the one line that de-risks the primary CTA. */
 .wave{
   position:absolute;z-index:0;
-  left:0;right:0;bottom:8%;
-  width:100%;height:220px;
+  left:0;right:0;bottom:0;
+  width:100%;height:150px;
   opacity:.6;pointer-events:none;
 }
 .wave path{
@@ -261,10 +383,13 @@ body{
   display:grid;grid-template-columns:repeat(4,minmax(0,1fr));
   border-top:1px solid var(--line);
 }
+/* The 24px gutter was entirely on one side, so cells 2-4 started flush
+   against the rule to their left. Split it. */
 .numbers__cell{
-  padding:var(--s48) var(--s24) 0 0;
+  padding:var(--s48) var(--s24) 0 var(--s24);
   border-right:1px solid var(--line);
 }
+.numbers__cell:first-child{padding-left:0}
 .numbers__cell:last-child{border-right:0;padding-right:0}
 .numbers__fig{color:var(--magenta);font-size:clamp(56px,6.2vw,96px)}
 .numbers__label{margin-top:var(--s16);max-width:22ch}
@@ -296,7 +421,11 @@ body{
    ========================================================================== */
 .receipts{margin-top:var(--s64);display:grid;gap:var(--s48)}
 @media (min-width:900px){.receipts{grid-template-columns:repeat(2,1fr);gap:var(--s48) var(--s64)}}
-.receipt{border-top:1px solid rgba(255,255,255,.28);padding-top:var(--s24)}
+.receipt{
+  border-top:1px solid rgba(255,255,255,.28);padding-top:var(--s24);
+  display:grid;grid-template-columns:auto minmax(0,1fr);
+  gap:var(--s24);align-items:start;
+}
 .receipt__fig{
   /* lime spike 3 of 3 */
   font-family:var(--display);font-weight:800;
@@ -307,20 +436,59 @@ body{
 .receipt__body{margin-top:var(--s12);color:rgba(255,255,255,.82);max-width:52ch}
 .receipt--wide{grid-column:1/-1}
 
+/* Now sits on bone, not inside the violet fill, so it takes ink/slate. The
+   previous hardcoded white would have rendered invisible here. */
 .credmeta{
   margin-top:var(--s96);
   display:grid;gap:var(--s48);
-  border-top:1px solid rgba(255,255,255,.28);
+  border-top:1px solid var(--line);
   padding-top:var(--s48);
 }
-@media (min-width:900px){.credmeta{grid-template-columns:repeat(3,1fr);gap:var(--s64)}}
-.credmeta ul li{
-  color:rgba(255,255,255,.72);
-  padding-block:var(--s8);
-}
+@media (min-width:900px){.credmeta{grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--s96)}}
 .credmeta ul{margin-top:var(--s16)}
-.credmeta p{color:rgba(255,255,255,.72);margin-top:var(--s16);max-width:36ch}
+.credmeta ul li{
+  color:var(--slate);
+  padding-block:var(--s8);
+  border-top:1px solid var(--line);
+}
+.credmeta ul li:first-child{border-top:0}
+.credmeta p{color:var(--slate);margin-top:var(--s16);max-width:44ch}
 .credmeta em{font-style:italic}
+
+/* ==========================================================================
+   PLATFORM ROW
+   The supplied lockups are dark artwork on transparency, so they can only sit
+   on a light ground; on the violet or ink fills they disappear.
+   ========================================================================== */
+.platforms{margin-top:var(--s64);border-top:1px solid var(--line);padding-top:var(--s32)}
+.platforms__row{
+  margin-top:var(--s24);
+  display:flex;flex-wrap:wrap;align-items:center;
+  gap:var(--s32) var(--s48);
+}
+.platforms__row img{height:26px;width:auto;opacity:.85}
+@media (max-width:900px){
+  .platforms__row{gap:var(--s24) var(--s32)}
+  .platforms__row img{height:20px}
+}
+
+/* ==========================================================================
+   TRUSTED BY — cover art on ink, so the artwork does the talking
+   ========================================================================== */
+.trusted{
+  margin-top:var(--s48);
+  display:grid;grid-template-columns:repeat(4,minmax(0,1fr));
+  gap:var(--s24);
+}
+.trusted li{border-radius:14px;overflow:hidden;background:rgba(255,255,255,.06)}
+.trusted img{width:100%;aspect-ratio:1/1;object-fit:cover;display:block}
+@media (max-width:900px){
+  .trusted{grid-template-columns:repeat(2,minmax(0,1fr));gap:var(--s16)}
+}
+
+/* Ink sections need their own eyebrow tone; --slate is too dark on ink. */
+.fill-ink .eyebrow{color:rgba(248,244,238,.72)}
+.fill-ink .h2{color:var(--bone)}
 
 .badge{
   margin-top:var(--s24);width:132px;border-radius:12px;
@@ -346,7 +514,10 @@ body{
   border-radius:var(--r-card);
   padding:var(--s32);
 }
-.card__label{color:var(--magenta)}
+/* Ink, not magenta: magenta at 13px is 4.10:1 on white and the palette forbids
+   magenta type below 24px. The colour carries on the rule instead. */
+.card__label{color:var(--ink);display:flex;align-items:center;gap:var(--s8)}
+.card__label::before{content:"";width:18px;height:2px;background:var(--magenta);flex:0 0 auto}
 .card h3{margin-top:var(--s16);font-size:24px}
 .card ul{margin-top:var(--s24)}
 .card ul li{
@@ -446,6 +617,27 @@ body{
    that is not rendered, which defeats the point. */
 .hp{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
 
+/* Success panel — replaces the form on send. */
+.sent{
+  background:var(--paper);border:1px solid var(--line);
+  border-radius:var(--r-card);padding:var(--s48) var(--s32);
+  text-align:center;
+}
+.sent:focus{outline:2px solid var(--ink);outline-offset:3px}
+.sent__tick{
+  width:56px;height:56px;margin:0 auto var(--s24);
+  border-radius:50%;background:var(--lime);
+  display:grid;place-items:center;
+}
+.sent__tick svg{width:30px;height:30px;fill:none;stroke:var(--ink);
+  stroke-width:3;stroke-linecap:round;stroke-linejoin:round}
+.sent p{margin-top:var(--s16);color:var(--slate);max-width:38ch;
+  margin-inline:auto}
+
+/* The offer cards carry 3/1/3 list items, so the middle card stretched to the
+   tallest and left a visible hole. Let each size to its own content. */
+.book{align-items:start}
+
 /* ==========================================================================
    17. FOOTER
    ========================================================================== */
@@ -515,10 +707,11 @@ body.audit [data-verify]::after{
   .card,.obj,.form{padding:var(--s24)}
 
   .hero__inner{max-width:none}
-  .wave{height:140px;bottom:2%}
+  .wave{height:90px;bottom:0}
 
   .numbers{grid-template-columns:repeat(2,minmax(0,1fr))}
-  .numbers__cell{padding:var(--s32) var(--s16) 0 0}
+  .numbers__cell{padding:var(--s32) var(--s16) 0 var(--s16)}
+  .numbers__cell:nth-child(2n+1){padding-left:0}
   .numbers__cell:nth-child(2n){border-right:0;padding-right:0}
   .numbers__cell:nth-child(-n+2){padding-top:var(--s32)}
   .numbers__cell:nth-child(n+3){border-top:1px solid var(--line);margin-top:var(--s24)}
@@ -576,6 +769,82 @@ if ('IntersectionObserver' in window) {
 </head>
 
 <body>
+
+<!-- ======================================================================
+     STICKY HEADER — enters once the hero is past
+     ====================================================================== -->
+<div class="topbar" id="topbar">
+  <div class="container topbar__inner">
+    <div>
+      <span class="topbar__name">Sylvia Nopar Thomas</span>
+      <span class="topbar__cred">Producer, REI Co-op's <em>Wild Ideas Worth Living</em> and <em>Thrifty Traveler</em></span>
+    </div>
+    <a class="btn btn--primary" href="#contact">Book the intro call</a>
+  </div>
+</div>
+
+<!-- ======================================================================
+     RECEIPT BADGE SPRITE
+     Drawn here rather than pulled from third-party brand assets. Where a
+     receipt carries real figures the mark plots those exact figures; where it
+     doesn't, it stays an icon rather than implying data that doesn't exist.
+     ====================================================================== -->
+<svg width="0" height="0" style="position:absolute" aria-hidden="true" focusable="false"><defs>
+
+  <!-- Completion 55% -> 85%: the low and high points are plotted true. -->
+  <symbol id="i-completion" viewBox="0 0 32 32">
+    <path class="st-dim" d="M2 30h28"/>
+    <path class="st" d="M4 15.4C10 15.4 12 5.4 28 5.4"/>
+    <circle class="fl-dim" cx="4" cy="15.4" r="2.6"/>
+    <circle class="fl" cx="28" cy="5.4" r="3"/>
+  </symbol>
+
+  <!-- Growth 29k -> 50k: bar heights are in true 29:50 ratio. -->
+  <symbol id="i-growth" viewBox="0 0 32 32">
+    <path class="st-dim" d="M2 30h28"/>
+    <rect class="fl-dim" x="5"  y="14.5" width="8" height="13.5" rx="1.5"/>
+    <rect class="fl"     x="19" y="4"    width="8" height="24"   rx="1.5"/>
+  </symbol>
+
+  <!-- Consumption 80%+: the arc sweeps a true 80% of the circle. -->
+  <symbol id="i-consumption" viewBox="0 0 32 32">
+    <circle class="st-dim" cx="16" cy="16" r="12"/>
+    <circle class="st" cx="16" cy="16" r="12"
+            stroke-dasharray="60.3 75.4" transform="rotate(-90 16 16)"/>
+    <circle class="fl" cx="16" cy="16" r="3.5"/>
+  </symbol>
+
+  <!-- Live show: a ticket stub. -->
+  <symbol id="i-tickets" viewBox="0 0 32 32">
+    <path class="st" d="M4 9h24v5a3 3 0 0 0 0 6v5H4v-5a3 3 0 0 0 0-6V9Z"/>
+    <path class="st-dim" d="M12 12v8M20 12v8" stroke-dasharray="2 3"/>
+  </symbol>
+
+  <!-- Apple Podcasts chart placement: a rank marker, not Apple's mark. -->
+  <symbol id="i-chart" viewBox="0 0 32 32">
+    <path class="st-dim" d="M2 30h28"/>
+    <rect class="fl" x="12.5" y="6" width="7" height="22" rx="1.5"/>
+    <rect class="fl-dim" x="2.5"  y="17" width="7" height="11" rx="1.5"/>
+    <rect class="fl-dim" x="22.5" y="20" width="7" height="8"  rx="1.5"/>
+    <path class="st" d="M16 2.5 17.6 5h-3.2L16 2.5Z"/>
+  </symbol>
+
+  <!-- Downloads: headphones plus a descending arrow. No fake trend line. -->
+  <symbol id="i-downloads" viewBox="0 0 32 32">
+    <path class="st" d="M5 20v-4a11 11 0 0 1 22 0v4"/>
+    <rect class="fl" x="2.5" y="19" width="6" height="10" rx="3"/>
+    <rect class="fl" x="23.5" y="19" width="6" height="10" rx="3"/>
+    <path class="st-dim" d="M16 9v7m0 0 3-3m-3 3-3-3"/>
+  </symbol>
+
+  <!-- Award: laurel wreath around a star. -->
+  <symbol id="i-award" viewBox="0 0 32 32">
+    <path class="st" d="M10 5a13 13 0 0 0 0 22"/>
+    <path class="st" d="M22 5a13 13 0 0 1 0 22"/>
+    <path class="fl" d="m16 10 2.1 4.3 4.7.7-3.4 3.3.8 4.7-4.2-2.2-4.2 2.2.8-4.7-3.4-3.3 4.7-.7L16 10Z"/>
+  </symbol>
+
+</defs></svg>
 
 <!-- ======================================================================
      1. HERO
@@ -637,17 +906,17 @@ if ('IntersectionObserver' in window) {
   <div class="container">
     <div class="numbers">
 
-      <div class="numbers__cell" data-rise data-verify="F11 · platform + window">
+      <div class="numbers__cell" data-rise data-claim="completion-wiwl">
         <div class="stat numbers__fig"><span data-count="85" data-suffix="%">85%</span></div>
         <p class="small numbers__label">Episode completion on <em>Wild Ideas Worth Living</em>, up from roughly 55&ndash;60%</p>
       </div>
 
-      <div class="numbers__cell" data-rise data-verify="F7 · conflicting figure">
+      <div class="numbers__cell" data-rise data-claim="growth-tt">
         <div class="stat numbers__fig"><span data-count="50" data-suffix="K">50K</span></div>
         <p class="small numbers__label">Listens for <em>Thrifty Traveler</em>, up from 29,000 in about 90 days</p>
       </div>
 
-      <div class="numbers__cell" data-rise data-verify="F10 · show figure, not hers">
+      <div class="numbers__cell" data-rise data-claim="downloads-wiwl">
         <div class="stat numbers__fig"><span data-count="6" data-suffix="M+">6M+</span></div>
         <p class="small numbers__label">Downloads for <em>Wild Ideas Worth Living</em>, the show she produces</p>
       </div>
@@ -711,14 +980,22 @@ if ('IntersectionObserver' in window) {
           <p>Chart pushes, platform features, awards you qualify for and never submitted, live events, the right industry people to know. That work never makes it to the top of your list because you're busy shipping episodes. It's on the top of mine.</p>
         </div>
       </div>
-      <div class="beat" data-rise>
-        <div class="beat__num">04</div>
-        <div class="beat__body">
-          <h3 class="h3">Your show still sounds like your show.</h3>
-          <p>I'm not going to hand you a plan that scrubs off whatever made people love it in the first place. Growth that costs you your voice isn't growth, it's a different show with better numbers.</p>
-        </div>
-      </div>
     </div>
+  </div>
+</section>
+
+<!-- ======================================================================
+     THE PROMISE — was beat 04 of 4.
+     Pulled out of the list because it is not a service description: it is the
+     only line on the page that answers the fear that blocks the sale. Set as
+     list item four, in typography identical to the three tasks above it, it
+     read as the fourth most important thing here. Copy is unchanged.
+     ====================================================================== -->
+<section class="section section--tight fill-peach">
+  <div class="container promise">
+    <p class="eyebrow" data-rise>The promise underneath all of it</p>
+    <h2 class="h2" data-rise>Your show still sounds like your show.</h2>
+    <p data-rise>I'm not going to hand you a plan that scrubs off whatever made people love it in the first place. Growth that costs you your voice isn't growth, it's a different show with better numbers.</p>
   </div>
 </section>
 
@@ -732,52 +1009,111 @@ if ('IntersectionObserver' in window) {
 
     <div class="receipts">
 
-      <div class="receipt" data-rise data-verify="F11 · platform + window">
-        <p class="receipt__fig"><span data-count="55" data-suffix="%">55%</span> to <span data-count="85" data-suffix="%">85%</span> completion.</p>
-        <p class="receipt__body"><em>Wild Ideas Worth Living</em> went from roughly 55 to 60 percent completion to around 85 percent over the time I've worked on it. In podcasting, 80 percent and up is exceptional. Getting there was a deliberate goal, not luck.</p>
+      <div class="receipt" data-rise data-claim="completion-wiwl">
+        <div class="rbadge"><svg><use href="#i-completion"/></svg></div>
+        <div>
+          <p class="receipt__fig"><span data-count="55" data-suffix="%">55%</span> to <span data-count="85" data-suffix="%">85%</span> completion.</p>
+          <p class="receipt__body"><em>Wild Ideas Worth Living</em> went from roughly 55 to 60 percent completion to around 85 percent over the time I've worked on it. In podcasting, 80 percent and up is exceptional. Getting there was a deliberate goal, not luck.</p>
+        </div>
       </div>
 
-      <div class="receipt" data-rise data-verify="F7 · conflicting figure">
-        <p class="receipt__fig">29,000 to 50,000 listens in about 90 days.</p>
-        <p class="receipt__body">That's <em>Thrifty Traveler</em>, after we put a real growth plan in place. It's held that level since and it's still climbing.</p>
+      <div class="receipt" data-rise data-claim="growth-tt">
+        <div class="rbadge"><svg><use href="#i-growth"/></svg></div>
+        <div>
+          <p class="receipt__fig">29,000 to 50,000 listens in about 90 days.</p>
+          <p class="receipt__body">That's <em>Thrifty Traveler</em>, after we put a real growth plan in place. It's held that level since and it's still climbing.</p>
+        </div>
       </div>
 
-      <div class="receipt" data-rise data-verify="F11 · platform + window">
-        <p class="receipt__fig">An 80 percent plus consumption rate on <em>Thrifty Traveler</em>.</p>
-        <p class="receipt__body">People don't just press play. They stay.</p>
+      <div class="receipt" data-rise data-claim="consumption-tt">
+        <div class="rbadge"><svg><use href="#i-consumption"/></svg></div>
+        <div>
+          <p class="receipt__fig">An 80 percent plus consumption rate on <em>Thrifty Traveler</em>.</p>
+          <p class="receipt__body">People don't just press play. They stay.</p>
+        </div>
       </div>
 
-      <div class="receipt" data-rise>
-        <p class="receipt__fig">Almost 300 tickets sold at their first live show.</p>
-        <p class="receipt__body">It brought in sponsors and local press, and the company has kept investing in live events since. A second one happened alongside TEDx in Fargo.</p>
+      <div class="receipt" data-rise data-claim="live-event">
+        <div class="rbadge"><svg><use href="#i-tickets"/></svg></div>
+        <div>
+          <p class="receipt__fig">Almost 300 tickets sold at their first live show.</p>
+          <p class="receipt__body">It brought in sponsors and local press, and the company has kept investing in live events since. A second one happened alongside TEDx in Fargo.</p>
+        </div>
       </div>
 
-      <div class="receipt" data-rise data-verify="F9 · no country, category or date">
-        <p class="receipt__fig">Top 10 travel podcasts on Apple Podcasts.</p>
+      <div class="receipt" data-rise data-claim="apple-chart">
+        <div class="rbadge"><svg><use href="#i-chart"/></svg></div>
+        <div>
+          <p class="receipt__fig">Top 10 travel podcasts on Apple Podcasts.</p>
+        </div>
       </div>
 
-      <div class="receipt" data-rise data-verify="F10 · show figure, not hers">
-        <p class="receipt__fig">Over 6 million downloads</p>
-        <p class="receipt__body">for <em>Wild Ideas Worth Living</em>.</p>
+      <div class="receipt" data-rise data-claim="downloads-wiwl">
+        <div class="rbadge"><svg><use href="#i-downloads"/></svg></div>
+        <div>
+          <p class="receipt__fig">Over 6 million downloads</p>
+          <p class="receipt__body">for <em>Wild Ideas Worth Living</em>.</p>
+        </div>
       </div>
 
-      <div class="receipt receipt--wide" data-rise data-verify="F8 · show, year, category, placement">
-        <p class="receipt__fig">A Shorty Award that nobody would have won, because nobody would have entered.</p>
-        <p class="receipt__body">I spotted the category, ran the submission, and the show won it.</p>
+      <div class="receipt receipt--wide" data-rise data-claim="shorty-award">
+        <div class="rbadge"><svg><use href="#i-award"/></svg></div>
+        <div>
+          <p class="receipt__fig">A Shorty Award that nobody would have won, because nobody would have entered.</p>
+          <p class="receipt__body">I spotted the category, ran the submission, and the show won it.</p>
+        </div>
       </div>
 
     </div>
+  </div>
+</section>
+
+<!-- ======================================================================
+     THE SHOWS — lifted out of the violet band, which was carrying 16 claims
+     across 3.6 mobile screens of one hue and had stopped reading as evidence.
+     ====================================================================== -->
+<section class="section">
+  <div class="container">
+    <p class="eyebrow" data-rise>The work</p>
+    <h2 class="h2 measure-h2" data-rise>The two shows I'm in every week.</h2>
+
+    <div class="shows">
+      <article class="show" data-rise data-claim="rei-naming">
+        <div class="show__art">
+          <img src="images/wiwl-key-art.jpg" alt="Wild Ideas Worth Living cover art, produced by REI Co-op Studios" width="600" height="600" loading="lazy">
+        </div>
+        <div class="show__body">
+          <p class="eyebrow show__meta">REI Co-op</p>
+          <h3><em>Wild Ideas Worth Living</em></h3>
+          <p class="show__role">Producer, end to end. I research and pitch guests, run pre-interviews, sit in on the interview and ask the follow-ups, go through the tape to find the story, write scripts for the ear, work through rounds of editorial feedback, then build the episode with music and sound design.</p>
+        </div>
+      </article>
+
+      <article class="show" data-rise>
+        <div class="show__art">
+          <img src="images/thrifty-traveler-key-art.jpeg" alt="The Thrifty Traveler Podcast cover art" width="600" height="600" loading="lazy">
+        </div>
+        <div class="show__body">
+          <p class="eyebrow show__meta">Thrifty Traveler</p>
+          <h3><em>Thrifty Traveler</em></h3>
+          <p class="show__role">Production, growth and strategy. I'm at the recordings, I handle mixing and production edits, and I review performance and chase the larger industry opportunities the team doesn't have time to go after.</p>
+        </div>
+      </article>
+    </div>
+
+    <div class="platforms" data-rise>
+      <p class="eyebrow">Grown across every platform the show lives on</p>
+      <ul class="platforms__row">
+        <li><img src="images/platform-apple-podcasts.png" alt="Apple Podcasts" loading="lazy"></li>
+        <li><img src="images/platform-spotify.png" alt="Spotify" loading="lazy"></li>
+        <li><img src="images/platform-youtube.png" alt="YouTube" loading="lazy"></li>
+        <li><img src="images/platform-amazon-music.png" alt="Amazon Music" loading="lazy"></li>
+        <li><img src="images/platform-castbox.png" alt="Castbox" loading="lazy"></li>
+      </ul>
+    </div>
 
     <div class="credmeta">
-      <div data-rise data-verify="F3/F4 · REI naming + Puddle relationship">
-        <p class="eyebrow">Shows I produce</p>
-        <ul>
-          <li>REI Co-op, <em>Wild Ideas Worth Living</em></li>
-          <li><em>Thrifty Traveler</em></li>
-        </ul>
-      </div>
-
-      <div data-rise data-verify="F8 · verify each citation">
+      <div data-rise data-claim="awards-list">
         <p class="eyebrow">Awards for <em>Wild Ideas Worth Living</em></p>
         <ul>
           <li>2024 W3 Awards, Best in Show, Lifestyle</li>
@@ -785,7 +1121,7 @@ if ('IntersectionObserver' in window) {
           <li>2022 Signal Awards, Silver, Best Branded Podcast</li>
           <li>2025 Shorty Awards, finalist in two categories, Bronze for Branded Podcast</li>
         </ul>
-        <img class="badge" src="images/w3-winner-badge.jpg" alt="W3 Awards winner badge">
+        <img class="badge" src="images/w3-winner-badge.jpg" alt="W3 Awards winner badge" width="132" height="132" loading="lazy">
       </div>
 
       <div data-rise>
@@ -793,6 +1129,28 @@ if ('IntersectionObserver' in window) {
         <p>Working in audio professionally since 2015. Graduate certificate in documentary studies from the Salt Institute for Documentary Studies. Thomas J. Watson Fellow, 2014 to 2015.</p>
       </div>
     </div>
+  </div>
+</section>
+
+<!-- ======================================================================
+     TRUSTED BY — past shows. Deliberately no per-show role, date or result:
+     none is on file, and an unsupported claim next to someone else's cover art
+     is the one thing this page cannot afford. See F5.
+     ====================================================================== -->
+<section class="section section--tight fill-ink">
+  <div class="container">
+    <p class="eyebrow" data-rise>Trusted by</p>
+    <h2 class="h2 measure-h2" data-rise>Shows I've worked with.</h2>
+    <ul class="trusted" data-claim="past-shows">
+      <li data-rise><img src="images/show-unstoppable-kara-goldin.jpeg" alt="Unstoppable with Kara Goldin" loading="lazy"></li>
+      <li data-rise><img src="images/show-terri-cole.webp" alt="The Terri Cole Show" loading="lazy"></li>
+      <li data-rise><img src="images/show-rant-with-baeth.webp" alt="The Rant with Baeth" loading="lazy"></li>
+      <li data-rise><img src="images/show-shes-got-moxie.webp" alt="She's Got Moxie" loading="lazy"></li>
+      <li data-rise><img src="images/show-power-of-the-only.webp" alt="The Power of the Only" loading="lazy"></li>
+      <li data-rise><img src="images/show-life-gets-real.webp" alt="Life Gets Real" loading="lazy"></li>
+      <li data-rise><img src="images/show-beauty-biz.jpeg" alt="The Beauty Biz Show" loading="lazy"></li>
+      <li data-rise><img src="images/show-ask-dr-ben.webp" alt="Ask Dr. Ben" loading="lazy"></li>
+    </ul>
   </div>
 </section>
 
@@ -871,7 +1229,7 @@ if ('IntersectionObserver' in window) {
       <h2 class="h2">Sylvia Nopar Thomas</h2>
       <div class="prose" style="margin-top:var(--s24)">
         <p>Podcast producer, strategist and growth consultant, based in Minneapolis.</p>
-        <p data-verify="F3/F4 · REI naming + Puddle relationship">I produce REI Co-op's <em>Wild Ideas Worth Living</em> end to end: researching and pitching guests, running pre-interviews, sitting in on the interview and asking the follow-ups, going through the tape to find the story, writing scripts for the ear, working through rounds of editorial feedback, then building the episode with music and sound design.</p>
+        <p data-claim="rei-naming">I produce REI Co-op's <em>Wild Ideas Worth Living</em> end to end: researching and pitching guests, running pre-interviews, sitting in on the interview and asking the follow-ups, going through the tape to find the story, writing scripts for the ear, working through rounds of editorial feedback, then building the episode with music and sound design.</p>
         <p>On <em>Thrifty Traveler</em> I'm at the recordings, I handle mixing and production edits, and I run growth and strategy: reviewing performance, and looking for the larger industry opportunities the team doesn't have time to chase.</p>
         <p>My specialty is organic growth. In order to make your show grow, you have to have a good product, so I do the best I can to make the product as sharp as it can be.</p>
         <p>Graduate certificate in documentary studies from the Salt Institute for Documentary Studies. Thomas J. Watson Fellow, 2014 to 2015.</p>
@@ -892,6 +1250,14 @@ if ('IntersectionObserver' in window) {
       <div class="obj" data-rise>
         <div class="obj__q" aria-hidden="true">?</div>
         <div>
+          <h3 class="h3">"We've spent years building this. What if you come in and change everything?"</h3>
+          <p>I'm not going to. I start by listening to what you've already made, and I find what's working before I say a word about what isn't. Most of what I find first is small, quick, and doesn't touch the soul of the show at all. The bigger swings come later, and you're in every one of those conversations. I'm not interested in handing you somebody else's playbook. I've seen what happens when a show gets optimized into something its listeners don't recognize, and I'd rather grow slower than do that to you.</p>
+        </div>
+      </div>
+
+      <div class="obj" data-rise>
+        <div class="obj__q" aria-hidden="true">?</div>
+        <div>
           <h3 class="h3">"You're freelance. What if I need you and you're deep in someone else's show?"</h3>
           <p>I'm not full time and I won't pretend otherwise. I'm not the person sitting on Slack all day waiting for a ping. What I am is the person who's thought about your show before your meeting starts, who knows what your numbers did last month, and who's been doing this long enough to know which problems need a fast answer and which ones need a good one. If you need somebody at a desk from nine to five, hire that person. That's a real job and it isn't this one.</p>
         </div>
@@ -902,14 +1268,6 @@ if ('IntersectionObserver' in window) {
         <div>
           <h3 class="h3">"An editor costs less. What am I actually getting for the difference?"</h3>
           <p>An editor makes the episode you asked for. That's a genuine skill and you should have one. But an editor isn't going to tell you your third act is where everyone's leaving, or that the format you've used for two years is why your best guest underperformed, or that there's an award category you'd win if somebody filled out the form. I'm in the tape and in the strategy at the same time, and the reason that matters is that the two things are the same problem. You can't grow a show that isn't good, and you can't tell if it's good without listening properly.</p>
-        </div>
-      </div>
-
-      <div class="obj" data-rise>
-        <div class="obj__q" aria-hidden="true">?</div>
-        <div>
-          <h3 class="h3">"We've spent years building this. What if you come in and change everything?"</h3>
-          <p>I'm not going to. I start by listening to what you've already made, and I find what's working before I say a word about what isn't. Most of what I find first is small, quick, and doesn't touch the soul of the show at all. The bigger swings come later, and you're in every one of those conversations. I'm not interested in handing you somebody else's playbook. I've seen what happens when a show gets optimized into something its listeners don't recognize, and I'd rather grow slower than do that to you.</p>
         </div>
       </div>
     </div>
@@ -1090,6 +1448,21 @@ if ('IntersectionObserver' in window) {
     }, { threshold: 0 }).observe(wave);
   }
 
+  /* --- sticky header -----------------------------------------------------
+     Enters once the hero is past. The page is 19.7 screens on mobile and had
+     no way to act across ~93% of it, and her name and the REI credit did not
+     appear until screens 3.5 and 8.2.
+     -------------------------------------------------------------------- */
+  var topbar = document.getElementById('topbar');
+  var heroEl = document.querySelector('.hero');
+  if (topbar && heroEl && 'IntersectionObserver' in window) {
+    new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        topbar.classList.toggle('is-visible', !entry.isIntersecting);
+      });
+    }, { rootMargin: '-40% 0px 0px 0px' }).observe(heroEl);
+  }
+
   /* --- contact form ------------------------------------------------------
      The form posts natively without JS. Here we upgrade it to a fetch so the
      visitor never leaves the page. Every failure path says something true:
@@ -1140,9 +1513,27 @@ if ('IntersectionObserver' in window) {
       })
       .then(function (r) {
         if (r.res.ok && r.data.ok) {
-          form.reset();
-          document.getElementById('f-started').value = Date.now();
-          say(r.data.message || 'Thanks. That came straight to Sylvia.', true);
+          /* Previously this reset the fields and printed a 15px line below the
+             button, at the bottom of a 783px form. On mobile the most likely
+             observable outcome of a successful send was that nothing changed.
+             Replace the form outright and move focus to the confirmation. */
+          var panel = document.createElement('div');
+          panel.className = 'sent';
+          panel.setAttribute('role', 'status');
+          panel.setAttribute('tabindex', '-1');
+          panel.innerHTML =
+            '<div class="sent__tick" aria-hidden="true">' +
+              '<svg viewBox="0 0 32 32"><path d="M7 16.5 13.5 23 25 10"/></svg>' +
+            '</div>' +
+            '<h3 class="h3">That came straight to Sylvia.</h3>' +
+            '<p>She reads every message herself and replies herself. Nothing else ' +
+            'happens in between, and there is no sequence to unsubscribe from.</p>' +
+            '<p class="small">Would rather have it in one place? ' +
+            '<a class="link" href="' + LINKEDIN + '" target="_blank" rel="noopener">' +
+            'Message her on LinkedIn</a> as well.</p>';
+          form.replaceWith(panel);
+          panel.focus();
+          return;
         } else {
           say((r.data.message || 'That did not send.') + linkedInFallback, false);
         }
@@ -1156,15 +1547,32 @@ if ('IntersectionObserver' in window) {
       });
   });
 
-  /* --- audit mode: ?audit ------------------------------------------------ */
+  /* --- audit mode: ?audit ------------------------------------------------
+     The flag text is NOT in the markup. It used to ship as data-verify
+     attributes, which put a machine-readable list of the claims she cannot
+     yet substantiate into view-source on a public page. Elements now carry
+     only a neutral data-claim slug; the flags are fetched on demand.
+     -------------------------------------------------------------------- */
   if (/(\?|&)audit\b/.test(window.location.search)) {
-    document.body.classList.add('audit');
-    var flagged = document.querySelectorAll('[data-verify]');
-    console.group('UNVERIFIED CLAIMS — ' + flagged.length + ' on this page');
-    flagged.forEach(function (el) {
-      console.log(el.getAttribute('data-verify'), '→', el.textContent.trim().slice(0, 90));
-    });
-    console.groupEnd();
+    fetch('audit-flags.json')
+      .then(function (r) { return r.json(); })
+      .then(function (flags) {
+        document.body.classList.add('audit');
+        var n = 0;
+        console.group('UNVERIFIED CLAIMS');
+        Object.keys(flags).forEach(function (slug) {
+          document.querySelectorAll('[data-claim="' + slug + '"]').forEach(function (el) {
+            el.setAttribute('data-verify', flags[slug]);
+            n++;
+            console.log(flags[slug], '→', el.textContent.trim().slice(0, 90));
+          });
+        });
+        console.log(n + ' flagged element(s) on this page');
+        console.groupEnd();
+      })
+      .catch(function () {
+        console.warn('audit mode: audit-flags.json not reachable (needs a server, not file://)');
+      });
   }
 })();
 </script>
