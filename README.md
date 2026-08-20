@@ -5,9 +5,44 @@ file directly in a browser and it works. Only external dependency is Google Font
 (Bricolage Grotesque + Instrument Sans).
 
 ```
-index.html          the whole site — markup, CSS, JS
-images/             the four uploaded assets
+index.html                  the whole site — markup, CSS, JS
+images/                     the four uploaded assets
+functions/api/contact.js    Cloudflare Pages Function behind the contact form
 ```
+
+## Deploying
+
+Cloudflare Pages, connected to this repo. No build command, no build output
+directory — it is a static file plus one Function.
+
+**Set these before the form will work** (Pages → Settings → Environment variables).
+`CONTACT_TO` is Sylvia's address and is deliberately *not* in this repo, which is
+public. Mark both it and the API key as **secrets**, not plaintext.
+
+| Variable | Value | Secret |
+|---|---|---|
+| `RESEND_API_KEY` | Resend API key | yes |
+| `CONTACT_TO` | Sylvia's inbox | yes |
+| `CONTACT_FROM` | `Website <hello@thedomain.com>` — must be a Resend-verified sender | no |
+| `TURNSTILE_SECRET` | optional; if set, a Turnstile token is required | yes |
+
+Resend needs a verified sending domain, so this is gated on the domain (F6). Until
+then the Function returns a clear "not configured yet" message and points at
+LinkedIn — it never reports a success it did not get.
+
+### How the form degrades
+
+| Situation | What happens |
+|---|---|
+| Normal | `fetch` posts, inline confirmation, page never navigates |
+| JS disabled | Native form post; the Function returns a styled HTML confirmation |
+| Opened from disk (`file://`) | Says it's a local preview and points at LinkedIn |
+| Network drops / server errors | Honest message, **the typed message is preserved**, LinkedIn offered |
+| Env vars unset | 500 with "not configured yet", nothing silently lost |
+
+Spam is handled by an off-screen honeypot field and a three-second time trap, both
+of which return a fake success so bots don't learn to retry. Turnstile is wired
+and dormant — set `TURNSTILE_SECRET` and add the widget to switch it on.
 
 ## Audit mode
 
@@ -29,8 +64,8 @@ Ordered by what can actually stop Thursday.
 
 | # | Flag | Blocker | What unblocks it |
 |---|---|---|---|
-| 1 | F6 | **No domain.** None of the four domain questions were answered. | Buy one today on an account we control. |
-| 2 | F20 | **Contact form has no handler.** `action=""` is a deliberate placeholder. | Cloudflare Pages Function or Formspree. Must route to her inbox without rendering the address. |
+| 1 | F6 | **No domain.** None of the four domain questions were answered. Also gates the Resend verified sender. | Buy one today on an account we control. |
+| 2 | F20 | ~~Contact form has no handler.~~ **Built.** Now blocked only on the env vars above, which are blocked on the domain. | Deploy to Pages, set the three variables. |
 | 3 | F1 | **Zero testimonials.** One pending. | Ask REI + Thrifty Traveler this week. |
 | 4 | F3/F4 | **REI naming, and the Puddle Creative relationship is undefined.** REI is named in text (defensible). No REI logo or key art is used. | Confirm whether her REI work runs through Puddle, and get a yes before any REI mark goes on the page. |
 
@@ -79,6 +114,10 @@ Sylvia's call. The form's own submit button already reads "Send me a message".
 - Footer links are bone text with a magenta underline rather than magenta text.
   Magenta on `--ink` at 18px is 4.46:1 (fails AA), and the palette rules forbid
   magenta type below 24px anyway.
+- `--lime` is specified as a spike used at most three times (hero mark, waveform,
+  credibility figures). The form's success state is a fourth. It is transient
+  post-submission UI rather than page furniture, and green-for-sent is worth more
+  than the purity of the rule. Easy to change to `--peach` if you disagree.
 - The violet fill sits on **Credibility** rather than the Numbers row. The page
   grew from 8 sections to 11, and the system allows only two full-bleed fills;
   putting violet on the heaviest section keeps the longest bone run to three.

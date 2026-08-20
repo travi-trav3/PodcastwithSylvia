@@ -438,7 +438,13 @@ body{
   border-radius:12px;background:var(--peach);color:var(--ink);
   font-size:15px;line-height:1.5;
 }
+.form__status--ok{background:var(--lime)}
 .form__status[hidden]{display:none}
+.form .btn[disabled]{opacity:.6;pointer-events:none}
+
+/* Honeypot. Off-screen rather than display:none — some bots skip anything
+   that is not rendered, which defeats the point. */
+.hp{position:absolute;left:-9999px;width:1px;height:1px;overflow:hidden}
 
 /* ==========================================================================
    17. FOOTER
@@ -932,14 +938,24 @@ if ('IntersectionObserver' in window) {
     </div>
 
     <!--
-      TODO F20 — form has no handler yet. action="" is a deliberate placeholder.
-      Submissions must route to Sylvia's inbox (address must NOT be rendered on
-      the page). Needs a Cloudflare Pages Function / Formspree endpoint and a
-      domain before launch.
+      Posts to the Cloudflare Pages Function at functions/api/contact.js.
+      The destination address lives in the CONTACT_TO environment variable, not
+      in this repo and not on this page.
+
+      action is set, so the form still works with JavaScript disabled. The
+      script below upgrades it to a fetch so the page never navigates away.
     -->
-    <form class="form" id="contact-form" data-rise action="" method="post" data-verify="F20 · no form handler yet">
+    <form class="form" id="contact-form" data-rise action="/api/contact" method="post">
       <h3 class="h3">Tell me about the show</h3>
       <p class="small" style="margin-top:var(--s8)">This comes straight to me. I read every one and I write back myself.</p>
+
+      <!-- Honeypot. Hidden from people, catnip to bots. Never remove the label:
+           some screen readers announce unlabelled fields. -->
+      <div class="hp" aria-hidden="true">
+        <label for="f-company">Company</label>
+        <input id="f-company" name="company" type="text" tabindex="-1" autocomplete="off">
+      </div>
+      <input type="hidden" name="started" id="f-started" value="">
 
       <div class="form__row">
         <label for="f-name">Your name</label>
@@ -1075,20 +1091,69 @@ if ('IntersectionObserver' in window) {
   }
 
   /* --- contact form ------------------------------------------------------
-     No endpoint is wired yet (see TODO F20). Until one exists, the form must
-     not silently swallow a submission — it says so plainly and points at the
-     working channel instead.
+     The form posts natively without JS. Here we upgrade it to a fetch so the
+     visitor never leaves the page. Every failure path says something true:
+     it never reports success it did not get.
      -------------------------------------------------------------------- */
-  var form = document.getElementById('contact-form');
+  var form   = document.getElementById('contact-form');
   var status = document.getElementById('form-status');
+  var submit = form.querySelector('button[type="submit"]');
+  var LINKEDIN = 'https://www.linkedin.com/in/sylvia-nopar-thomas/';
+  var linkedInFallback =
+    ' Or reach Sylvia on <a class="link" href="' + LINKEDIN +
+    '" target="_blank" rel="noopener">LinkedIn</a>.';
+
+  // Time trap: stamp when the form became available to fill in.
+  document.getElementById('f-started').value = Date.now();
+
+  function say(msg, ok) {
+    status.hidden = false;
+    status.classList.toggle('form__status--ok', !!ok);
+    status.innerHTML = msg;
+  }
 
   form.addEventListener('submit', function (e) {
-    if (!form.getAttribute('action')) {
+    // Opened straight from disk there is no server to post to. Say so rather
+    // than letting the browser fail at file:///api/contact.
+    if (location.protocol === 'file:') {
       e.preventDefault();
-      status.hidden = false;
-      status.innerHTML = 'This form is not connected yet. Until it is, reach Sylvia on ' +
-        '<a class="link" href="https://www.linkedin.com/in/sylvia-nopar-thomas/" target="_blank" rel="noopener">LinkedIn</a>.';
+      say('This is a local preview, so the form has nothing to post to.' + linkedInFallback, false);
+      return;
     }
+
+    e.preventDefault();
+    if (!form.reportValidity()) return;
+
+    submit.disabled = true;
+    var original = submit.textContent;
+    submit.textContent = 'Sending...';
+    status.hidden = true;
+
+    fetch(form.action, {
+      method: 'POST',
+      headers: { accept: 'application/json' },
+      body: new FormData(form)
+    })
+      .then(function (res) {
+        return res.json().catch(function () { return { ok: false }; })
+          .then(function (data) { return { res: res, data: data }; });
+      })
+      .then(function (r) {
+        if (r.res.ok && r.data.ok) {
+          form.reset();
+          document.getElementById('f-started').value = Date.now();
+          say(r.data.message || 'Thanks. That came straight to Sylvia.', true);
+        } else {
+          say((r.data.message || 'That did not send.') + linkedInFallback, false);
+        }
+      })
+      .catch(function () {
+        say('That did not send, the network dropped it.' + linkedInFallback, false);
+      })
+      .then(function () {
+        submit.disabled = false;
+        submit.textContent = original;
+      });
   });
 
   /* --- audit mode: ?audit ------------------------------------------------ */
