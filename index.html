@@ -1,0 +1,1081 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Sylvia Nopar Thomas — Podcast Producer, Strategist &amp; Growth Consultant</title>
+<meta name="description" content="Grow your show without turning it into something you don't recognize. Podcast production, strategy and organic growth for established shows.">
+
+<!--
+  ============================================================================
+  SYLVIA NOPAR THOMAS — one-page site
+  ============================================================================
+  Single self-contained file. No frameworks, no build step, no npm.
+  Only external dependency is Google Fonts. Opens directly from disk.
+
+  AUDIT MODE: append ?audit to the URL to outline every claim that is not yet
+  verified. Each is tagged with its flag ID from the client packet §9.
+  ============================================================================
+-->
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,600..800&family=Instrument+Sans:wght@400..600&display=swap" rel="stylesheet">
+
+<style>
+/* ==========================================================================
+   1. TOKENS
+   ========================================================================== */
+:root{
+  /* Palette — nine values. Light ground, three saturated actors, one spike. */
+  --bone:    #F8F4EE;
+  --paper:   #FFFFFF;
+  --ink:     #17131F;
+  --slate:   #5B5468;
+  --magenta: #E8336D;
+  --violet:  #4A2CE0;
+  --lime:    #C8F04A;
+  --peach:   #FFD9C7;
+  --line:    #E4DCD0;
+
+  /* Space — 4px base */
+  --s4:4px;   --s8:8px;   --s12:12px; --s16:16px; --s24:24px; --s32:32px;
+  --s48:48px; --s64:64px; --s96:96px; --s128:128px; --s160:160px; --s200:200px;
+
+  /* Vertical rhythm — deliberately varied, not uniform */
+  --pad-hero:  var(--s160);
+  --pad-std:   var(--s128);
+  --pad-tight: var(--s96);
+
+  /* Grid */
+  --container: 1240px;
+  --gutter:    var(--s24);
+  --margin:    var(--s32);
+
+  /* Radii */
+  --r-pill: 999px;
+  --r-card: 20px;
+
+  /* Type families */
+  --display: "Bricolage Grotesque", "Segoe UI", system-ui, sans-serif;
+  --body:    "Instrument Sans", system-ui, -apple-system, sans-serif;
+
+  /* Motion */
+  --ease-rise: cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* ==========================================================================
+   2. RESET
+   ========================================================================== */
+*,*::before,*::after{box-sizing:border-box}
+html{-webkit-text-size-adjust:100%}
+body,h1,h2,h3,h4,p,figure,blockquote,dl,dd,ul,ol{margin:0}
+ul,ol{padding:0;list-style:none}
+img{max-width:100%;display:block;height:auto}
+button,input,textarea{font:inherit;color:inherit}
+a{color:inherit}
+
+body{
+  background:var(--bone);
+  color:var(--ink);
+  font-family:var(--body);
+  font-size:18px;
+  line-height:1.65;
+  font-weight:400;
+  -webkit-font-smoothing:antialiased;
+  overflow-x:hidden;
+}
+
+/* ==========================================================================
+   3. LAYOUT PRIMITIVES
+   ========================================================================== */
+.section{padding-block:var(--pad-std);position:relative}
+.section--hero{padding-block:var(--pad-hero)}
+.section--tight{padding-block:var(--pad-tight)}
+.section--final{padding-block:var(--pad-hero)}
+
+.container{
+  width:100%;
+  max-width:var(--container);
+  margin-inline:auto;
+  padding-inline:var(--margin);
+}
+
+/* Full-bleed colour fills — two only, per the system */
+.fill-violet{background:var(--violet);color:#fff}
+.fill-peach{background:var(--peach)}
+.fill-ink{background:var(--ink);color:var(--bone)}
+
+/* Measure. Body/lead use ch at their own font-size; display measures are set
+   in px because a ch on a 96px headline resolves against the inherited body
+   size, not the headline's, and collapses the line to one word. */
+.measure{max-width:62ch}
+.measure-lead{max-width:46ch}
+.measure-h1{max-width:1080px}
+.measure-h2{max-width:820px}
+
+/* ==========================================================================
+   4. TYPE SCALE — desktop @1440
+   ========================================================================== */
+.eyebrow{
+  font-size:13px;line-height:1.2;letter-spacing:.10em;
+  text-transform:uppercase;font-weight:600;color:var(--slate);
+}
+.fill-violet .eyebrow{color:rgba(255,255,255,.72)}
+
+.h-hero{
+  font-family:var(--display);
+  font-size:96px;line-height:.92;letter-spacing:-.03em;font-weight:800;
+  text-wrap:balance;
+}
+.h2{
+  font-family:var(--display);
+  font-size:56px;line-height:1;letter-spacing:-.02em;font-weight:700;
+  text-wrap:balance;
+}
+.h3{
+  font-family:var(--display);
+  font-size:30px;line-height:1.2;letter-spacing:-.01em;font-weight:600;
+}
+.stat{
+  font-family:var(--display);
+  font-size:128px;line-height:.88;letter-spacing:-.04em;font-weight:800;
+  font-variant-numeric:tabular-nums;
+}
+.lead{font-size:22px;line-height:1.5}
+.small{font-size:15px;line-height:1.5;color:var(--slate)}
+.fill-violet .small{color:rgba(255,255,255,.72)}
+
+/* Rhythm inside a section */
+.eyebrow + *{margin-top:var(--s16)}
+.h2 + p,.h2 + .prose,.h-hero + p,.h3 + p{margin-top:var(--s24)}
+.prose > p + p{margin-top:var(--s24)}
+.block-gap{margin-top:var(--s64)}
+.cta-gap{margin-top:var(--s48)}
+
+/* ==========================================================================
+   5. BUTTONS + LINKS
+   ========================================================================== */
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;
+  gap:var(--s8);
+  font-size:17px;line-height:1;font-weight:600;
+  padding:20px 32px;
+  border-radius:var(--r-pill);
+  border:2px solid transparent;
+  text-decoration:none;cursor:pointer;
+  transition:transform 160ms ease-out, background-color 160ms ease-out,
+             border-color 160ms ease-out, color 160ms ease-out;
+}
+.btn--primary{background:var(--magenta);color:#fff}
+.btn--primary:hover{background:#D42A61;transform:translateY(-2px)}
+.btn--primary:active{transform:translateY(0);transition-duration:80ms}
+
+.btn--outline{background:transparent;color:var(--ink);border-color:var(--ink)}
+.btn--outline:hover{background:var(--ink);color:var(--bone);transform:translateY(-2px)}
+.btn--outline:active{transform:translateY(0);transition-duration:80ms}
+
+.btn:focus-visible{outline:2px solid var(--ink);outline-offset:3px}
+.fill-violet .btn:focus-visible{outline-color:#fff}
+
+/* link-underline — scaleX from left origin */
+.link{
+  position:relative;text-decoration:none;font-weight:500;
+  color:inherit;white-space:nowrap;
+}
+.link::after{
+  content:"";position:absolute;left:0;right:0;bottom:-2px;height:2px;
+  background:var(--magenta);
+  transform:scaleX(0);transform-origin:left;
+  transition:transform 220ms ease-out;
+}
+.link:hover::after,.link:focus-visible::after{transform:scaleX(1)}
+.link:focus-visible{outline:2px solid currentColor;outline-offset:3px;border-radius:2px}
+
+/* ==========================================================================
+   6. HERO
+   ========================================================================== */
+.hero{position:relative;overflow:hidden}
+.hero .container{position:relative;z-index:1}
+.hero .lead{margin-top:var(--s32);max-width:46ch;color:var(--slate)}
+.hero .cta-gap .small{margin-top:var(--s16)}
+
+/* lime spike 1 of 3 — highlight bar behind one word */
+.mark{position:relative;display:inline-block;white-space:nowrap}
+.mark::before{
+  content:"";position:absolute;z-index:-1;
+  left:-.06em;right:-.06em;bottom:.06em;height:.42em;
+  background:var(--lime);
+}
+
+/* wave-idle — lime spike 2 of 3 */
+.wave{
+  position:absolute;z-index:0;
+  left:0;right:0;bottom:8%;
+  width:100%;height:220px;
+  opacity:.6;pointer-events:none;
+}
+.wave path{
+  fill:none;stroke:var(--lime);stroke-width:2.5;stroke-linecap:round;
+}
+.wave__a{animation:wave-idle 8s ease-in-out infinite}
+.wave__b{animation:wave-idle 8s ease-in-out infinite reverse;opacity:.55}
+@keyframes wave-idle{
+  0%,100%{transform:translateY(0)}
+  50%    {transform:translateY(3px)}
+}
+.wave.is-paused .wave__a,.wave.is-paused .wave__b{animation-play-state:paused}
+
+/* ==========================================================================
+   7. CAPABILITY TICKER — ink strip, NOT client logos
+   ========================================================================== */
+.ticker{
+  background:var(--ink);color:var(--bone);
+  padding-block:var(--s24);
+  overflow:hidden;
+  -webkit-mask-image:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent);
+          mask-image:linear-gradient(90deg,transparent,#000 6%,#000 94%,transparent);
+}
+.ticker__track{
+  display:flex;width:max-content;
+  animation:ticker 40s linear infinite;
+}
+.ticker:hover .ticker__track{animation-play-state:paused}
+.ticker__group{display:flex;flex:0 0 auto}
+.ticker__item{
+  font-size:13px;line-height:1.2;letter-spacing:.10em;
+  text-transform:uppercase;font-weight:600;
+  padding-inline:var(--s24);
+  display:flex;align-items:center;gap:var(--s24);
+  white-space:nowrap;
+}
+.ticker__item::after{content:"";width:5px;height:5px;border-radius:50%;background:var(--magenta)}
+@keyframes ticker{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+
+/* ==========================================================================
+   8. NUMBERS ROW
+   ========================================================================== */
+/* minmax(0,1fr), not 1fr: a wide numeral's min-content width otherwise
+   stretches its own column and squeezes the others out of rhythm. */
+.numbers{
+  display:grid;grid-template-columns:repeat(4,minmax(0,1fr));
+  border-top:1px solid var(--line);
+}
+.numbers__cell{
+  padding:var(--s48) var(--s24) 0 0;
+  border-right:1px solid var(--line);
+}
+.numbers__cell:last-child{border-right:0;padding-right:0}
+.numbers__fig{color:var(--magenta);font-size:clamp(56px,6.2vw,96px)}
+.numbers__label{margin-top:var(--s16);max-width:22ch}
+
+/* ==========================================================================
+   9. PROBLEM
+   ========================================================================== */
+.rule-magenta{width:64px;height:3px;background:var(--magenta);margin-bottom:var(--s24)}
+
+/* ==========================================================================
+   10. SOLUTION — four beats, magenta numerals, hairline rules
+   ========================================================================== */
+.beats{margin-top:var(--s64);border-top:1px solid var(--line)}
+.beat{
+  display:grid;grid-template-columns:120px minmax(0,1fr);
+  gap:var(--gutter);
+  padding-block:var(--s48);
+  border-bottom:1px solid var(--line);
+}
+.beat__num{
+  font-family:var(--display);font-weight:800;font-size:30px;
+  letter-spacing:-.01em;color:var(--magenta);line-height:1.2;
+}
+.beat__body{max-width:62ch}
+.beat__body p{margin-top:var(--s16);color:var(--slate)}
+
+/* ==========================================================================
+   11. CREDIBILITY — violet full bleed, lime figures
+   ========================================================================== */
+.receipts{margin-top:var(--s64);display:grid;gap:var(--s48)}
+@media (min-width:900px){.receipts{grid-template-columns:repeat(2,1fr);gap:var(--s48) var(--s64)}}
+.receipt{border-top:1px solid rgba(255,255,255,.28);padding-top:var(--s24)}
+.receipt__fig{
+  /* lime spike 3 of 3 */
+  font-family:var(--display);font-weight:800;
+  font-size:40px;line-height:1.05;letter-spacing:-.02em;
+  color:var(--lime);
+  font-variant-numeric:tabular-nums;
+}
+.receipt__body{margin-top:var(--s12);color:rgba(255,255,255,.82);max-width:52ch}
+.receipt--wide{grid-column:1/-1}
+
+.credmeta{
+  margin-top:var(--s96);
+  display:grid;gap:var(--s48);
+  border-top:1px solid rgba(255,255,255,.28);
+  padding-top:var(--s48);
+}
+@media (min-width:900px){.credmeta{grid-template-columns:repeat(3,1fr);gap:var(--s64)}}
+.credmeta ul li{
+  color:rgba(255,255,255,.72);
+  padding-block:var(--s8);
+}
+.credmeta ul{margin-top:var(--s16)}
+.credmeta p{color:rgba(255,255,255,.72);margin-top:var(--s16);max-width:36ch}
+.credmeta em{font-style:italic}
+
+.badge{
+  margin-top:var(--s24);width:132px;border-radius:12px;
+  background:#fff;padding:var(--s8);
+}
+
+/* ==========================================================================
+   12. MID CTA
+   ========================================================================== */
+.midcta{text-align:center}
+.midcta .h2{margin-inline:auto;max-width:900px}
+.midcta .lead{margin-inline:auto;max-width:52ch;color:var(--slate)}
+.midcta .small{margin-top:var(--s16);margin-inline:auto;max-width:48ch}
+
+/* ==========================================================================
+   13. WHAT YOU CAN BOOK
+   ========================================================================== */
+.book{margin-top:var(--s64);display:grid;gap:var(--s24)}
+@media (min-width:900px){.book{grid-template-columns:repeat(3,1fr)}}
+.card{
+  background:var(--paper);
+  border:1px solid var(--line);
+  border-radius:var(--r-card);
+  padding:var(--s32);
+}
+.card__label{color:var(--magenta)}
+.card h3{margin-top:var(--s16);font-size:24px}
+.card ul{margin-top:var(--s24)}
+.card ul li{
+  padding-block:var(--s12);
+  border-top:1px solid var(--line);
+  color:var(--slate);font-size:17px;line-height:1.5;
+}
+.card ul li:first-child{border-top:0;padding-top:0}
+
+.book-note{
+  margin-top:var(--s48);
+  border-left:3px solid var(--magenta);
+  padding-left:var(--s24);
+  max-width:62ch;
+}
+.book-note p + p{margin-top:var(--s16)}
+
+/* ==========================================================================
+   14. ABOUT
+   ========================================================================== */
+.about{display:grid;gap:var(--s48);align-items:start}
+@media (min-width:900px){
+  .about{grid-template-columns:minmax(0,420px) minmax(0,1fr);gap:var(--s96)}
+}
+.about__photo{border-radius:var(--r-card);overflow:hidden;background:var(--line)}
+.about__credit{margin-top:var(--s12)}
+.about__body p{color:var(--slate)}
+.about__body p:first-child{color:var(--ink)}
+
+/* ==========================================================================
+   15. OBJECTIONS — peach full bleed, white cards
+   ========================================================================== */
+.objections{margin-top:var(--s64);display:grid;gap:var(--s24)}
+.obj{
+  background:var(--paper);
+  border-radius:var(--r-card);
+  padding:var(--s32);
+  display:grid;grid-template-columns:auto minmax(0,1fr);
+  gap:var(--s24);
+  align-items:start;
+}
+.obj__q{
+  font-family:var(--display);font-weight:800;font-size:40px;
+  line-height:1;color:var(--magenta);
+}
+.obj h3{font-size:24px}
+.obj p{margin-top:var(--s16);color:var(--slate);max-width:74ch}
+
+/* ==========================================================================
+   16. FINAL CTA + FORM
+   ========================================================================== */
+.final{display:grid;gap:var(--s64)}
+@media (min-width:980px){.final{grid-template-columns:minmax(0,1fr) minmax(0,460px);gap:var(--s96)}}
+.final .h-hero{font-size:72px}
+.final__copy p{color:var(--slate)}
+.final__actions{display:flex;flex-wrap:wrap;gap:var(--s16)}
+
+.form{
+  background:var(--paper);
+  border:1px solid var(--line);
+  border-radius:var(--r-card);
+  padding:var(--s32);
+}
+.form__row{margin-top:var(--s24)}
+.form__row:first-of-type{margin-top:var(--s24)}
+.form label{
+  display:block;
+  font-size:13px;line-height:1.2;letter-spacing:.10em;
+  text-transform:uppercase;font-weight:600;color:var(--slate);
+  margin-bottom:var(--s8);
+}
+.form input,.form textarea{
+  width:100%;
+  background:var(--bone);
+  border:1px solid var(--line);
+  border-radius:12px;
+  padding:14px 16px;
+  font-size:17px;line-height:1.5;
+  transition:border-color 160ms ease-out;
+}
+.form input:focus,.form textarea:focus{
+  outline:2px solid var(--ink);outline-offset:2px;border-color:var(--ink);
+}
+.form textarea{min-height:120px;resize:vertical}
+.form .btn{width:100%;margin-top:var(--s24)}
+.form__note{margin-top:var(--s16);text-align:center}
+.form__status{
+  margin-top:var(--s16);padding:var(--s16);
+  border-radius:12px;background:var(--peach);color:var(--ink);
+  font-size:15px;line-height:1.5;
+}
+.form__status[hidden]{display:none}
+
+/* ==========================================================================
+   17. FOOTER
+   ========================================================================== */
+.footer{background:var(--ink);color:var(--bone);padding-block:var(--s64)}
+.footer__inner{
+  display:flex;flex-wrap:wrap;gap:var(--s24);
+  justify-content:space-between;align-items:flex-end;
+}
+.footer__name{font-family:var(--display);font-weight:700;font-size:24px;letter-spacing:-.01em}
+.footer__desc{color:rgba(248,244,238,.66);font-size:15px;margin-top:var(--s8)}
+/* Bone text with a magenta rule, not magenta text: magenta on ink at 18px is
+   4.46:1 and the system forbids magenta type below 24px anyway. */
+.footer a{
+  color:var(--bone);text-decoration:none;font-weight:600;
+  border-bottom:2px solid var(--magenta);padding-bottom:2px;
+  transition:color 160ms ease-out,border-color 160ms ease-out;
+}
+.footer a:hover{color:var(--magenta);border-color:var(--magenta)}
+.footer a:focus-visible{outline:2px solid var(--bone);outline-offset:3px;border-radius:2px}
+.footer__meta{color:rgba(248,244,238,.5);font-size:15px}
+
+/* ==========================================================================
+   18. MOTION — rise-in
+   ========================================================================== */
+[data-rise]{
+  opacity:0;transform:translateY(24px);
+  transition:opacity 500ms var(--ease-rise), transform 500ms var(--ease-rise);
+}
+[data-rise].is-in{opacity:1;transform:none}
+
+/* ==========================================================================
+   19. AUDIT MODE — ?audit outlines every unverified claim
+   ========================================================================== */
+body.audit [data-verify]{
+  outline:2px dashed var(--magenta);outline-offset:4px;
+  position:relative;
+}
+body.audit [data-verify]::after{
+  content:attr(data-verify);
+  position:absolute;top:-10px;left:0;
+  background:var(--magenta);color:#fff;
+  font-family:var(--body);font-size:10px;font-weight:600;
+  letter-spacing:.08em;text-transform:uppercase;
+  padding:2px 6px;border-radius:4px;
+  pointer-events:none;z-index:5;
+}
+
+/* ==========================================================================
+   20. MOBILE — 390px
+   ========================================================================== */
+@media (max-width:900px){
+  :root{
+    --pad-hero:88px; --pad-std:72px; --pad-tight:56px;
+    --margin:20px;
+  }
+  body{font-size:17px;line-height:1.6}
+  .h-hero{font-size:44px;line-height:1;letter-spacing:-.02em}
+  .final .h-hero{font-size:40px}
+  .h2{font-size:32px}
+  .h3,.card h3,.obj h3{font-size:24px}
+  .stat,.numbers__fig{font-size:64px}
+  .lead{font-size:19px}
+  .eyebrow{font-size:12px}
+  .card,.obj,.form{padding:var(--s24)}
+
+  .hero__inner{max-width:none}
+  .wave{height:140px;bottom:2%}
+
+  .numbers{grid-template-columns:repeat(2,minmax(0,1fr))}
+  .numbers__cell{padding:var(--s32) var(--s16) 0 0}
+  .numbers__cell:nth-child(2n){border-right:0;padding-right:0}
+  .numbers__cell:nth-child(-n+2){padding-top:var(--s32)}
+  .numbers__cell:nth-child(n+3){border-top:1px solid var(--line);margin-top:var(--s24)}
+
+  .beat{grid-template-columns:1fr;gap:var(--s12);padding-block:var(--s32)}
+  .receipt__fig{font-size:32px}
+  .obj{grid-template-columns:1fr;gap:var(--s12)}
+  .obj__q{font-size:32px}
+  .footer__inner{align-items:flex-start}
+}
+
+/* ==========================================================================
+   21. REDUCED MOTION
+   ========================================================================== */
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{
+    animation-duration:.01ms !important;
+    animation-iteration-count:1 !important;
+    transition-duration:.01ms !important;
+    scroll-behavior:auto !important;
+  }
+  [data-rise]{opacity:0;transform:none;transition:opacity 200ms linear}
+  [data-rise].is-in{opacity:1}
+  .ticker__track,.wave__a,.wave__b{animation:none}
+  .btn:hover,.btn:active{transform:none}
+}
+
+html{scroll-behavior:smooth}
+@media (prefers-reduced-motion:reduce){html{scroll-behavior:auto}}
+
+.visually-hidden{
+  position:absolute;width:1px;height:1px;padding:0;margin:-1px;
+  overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0;
+}
+</style>
+</head>
+
+<body>
+
+<!-- ======================================================================
+     1. HERO
+     ====================================================================== -->
+<header class="section section--hero hero">
+  <svg class="wave" viewBox="0 0 1440 220" preserveAspectRatio="none" aria-hidden="true" focusable="false">
+    <path class="wave__a" d="M0,110 C120,60 240,160 360,110 C480,60 600,160 720,110 C840,60 960,160 1080,110 C1200,60 1320,160 1440,110"/>
+    <path class="wave__b" d="M0,140 C160,100 300,180 460,140 C620,100 760,180 920,140 C1080,100 1240,180 1440,140"/>
+  </svg>
+
+  <div class="container">
+    <h1 class="h-hero measure-h1" data-rise>Grow your show without turning it into something you don't <span class="mark">recognize</span>.</h1>
+    <p class="lead" data-rise>You've already got listeners, a format that works, and a team that cares. I help podcasts like yours figure out what's actually working, fix what isn't, and grow on purpose instead of by accident.</p>
+    <div class="cta-gap" data-rise>
+      <a class="btn btn--primary" href="#contact">Start with a 20 minute conversation</a>
+      <p class="small">No pitch, no deck. Just a conversation about your show.</p>
+    </div>
+  </div>
+</header>
+
+<!-- ======================================================================
+     CAPABILITY TICKER — her disciplines, not client logos
+     ====================================================================== -->
+<div class="ticker" aria-hidden="true">
+  <div class="ticker__track">
+    <div class="ticker__group">
+      <span class="ticker__item">Storytelling</span>
+      <span class="ticker__item">Script writing</span>
+      <span class="ticker__item">Sound design</span>
+      <span class="ticker__item">Organic growth</span>
+      <span class="ticker__item">Guest strategy</span>
+      <span class="ticker__item">Mixing</span>
+      <span class="ticker__item">Analytics</span>
+      <span class="ticker__item">Interviewing</span>
+      <span class="ticker__item">Reporting</span>
+      <span class="ticker__item">Editing</span>
+    </div>
+    <div class="ticker__group">
+      <span class="ticker__item">Storytelling</span>
+      <span class="ticker__item">Script writing</span>
+      <span class="ticker__item">Sound design</span>
+      <span class="ticker__item">Organic growth</span>
+      <span class="ticker__item">Guest strategy</span>
+      <span class="ticker__item">Mixing</span>
+      <span class="ticker__item">Analytics</span>
+      <span class="ticker__item">Interviewing</span>
+      <span class="ticker__item">Reporting</span>
+      <span class="ticker__item">Editing</span>
+    </div>
+  </div>
+</div>
+
+<main>
+
+<!-- ======================================================================
+     2. NUMBERS
+     ====================================================================== -->
+<section class="section section--tight" aria-label="Results at a glance">
+  <div class="container">
+    <div class="numbers">
+
+      <div class="numbers__cell" data-rise data-verify="F11 · platform + window">
+        <div class="stat numbers__fig"><span data-count="85" data-suffix="%">85%</span></div>
+        <p class="small numbers__label">Episode completion on <em>Wild Ideas Worth Living</em>, up from roughly 55&ndash;60%</p>
+      </div>
+
+      <div class="numbers__cell" data-rise data-verify="F7 · conflicting figure">
+        <div class="stat numbers__fig"><span data-count="50" data-suffix="K">50K</span></div>
+        <p class="small numbers__label">Listens for <em>Thrifty Traveler</em>, up from 29,000 in about 90 days</p>
+      </div>
+
+      <div class="numbers__cell" data-rise data-verify="F10 · show figure, not hers">
+        <div class="stat numbers__fig"><span data-count="6" data-suffix="M+">6M+</span></div>
+        <p class="small numbers__label">Downloads for <em>Wild Ideas Worth Living</em>, the show she produces</p>
+      </div>
+
+      <div class="numbers__cell" data-rise>
+        <div class="stat numbers__fig">2015</div>
+        <p class="small numbers__label">Working professionally in audio since. In radio since she was eighteen.</p>
+      </div>
+
+    </div>
+  </div>
+</section>
+
+<!-- ======================================================================
+     3. PROBLEM
+     ====================================================================== -->
+<section class="section">
+  <div class="container">
+    <div class="rule-magenta" data-rise></div>
+    <p class="eyebrow" data-rise>The problem</p>
+    <h2 class="h2 measure-h2" data-rise>You're making the show. You just can't tell if it's landing.</h2>
+    <div class="prose measure" data-rise>
+      <p>You publish every week. The show is good. You know it's good, because you're there when it gets made.</p>
+      <p>Then the numbers come in and they don't really tell you anything.</p>
+      <p>One episode does twice the traffic of the one before it and nobody on the team can say why. You're not sure how many people actually finish. You're not sure whether YouTube is the thing now or a distraction. There's a dashboard somewhere with forty numbers on it and no one has ever explained which two matter.</p>
+      <p>So you keep making the show the way you've always made it, and you hope.</p>
+      <p>Here's the quieter part. Podcasting gets lonely. You're in a studio, or a room, or a closet, talking into a microphone, and there's almost no face to face contact with the people on the other end of it. You can go a very long time without knowing whether any of it is reaching anyone.</p>
+      <p>And in the back of your mind there's a version where the show just flattens out. It doesn't fail, exactly. It plateaus. And eventually somebody asks what it's doing for the business, and you don't have a good answer ready.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ======================================================================
+     4. SOLUTION — four beats
+     ====================================================================== -->
+<section class="section">
+  <div class="container">
+    <p class="eyebrow" data-rise>What working together looks like</p>
+    <h2 class="h2 measure-h2" data-rise>I've spent a decade in the tape and in the numbers.</h2>
+    <p class="lead measure" data-rise>I'm Sylvia. I've been making audio professionally since 2015, and I've been in radio in one form or another since I was eighteen. I produce REI Co-op's <em>Wild Ideas Worth Living</em> and the <em>Thrifty Traveler</em> podcast, which means I'm in the weekly grind of making episodes and I'm also the person watching what's happening around the show.</p>
+
+    <div class="beats">
+      <div class="beat" data-rise>
+        <div class="beat__num">01</div>
+        <div class="beat__body">
+          <h3 class="h3">You get a straight answer about where you actually stand.</h3>
+          <p>I listen to your show the way a listener does, all the way through. Then I go into your back end, your platform numbers, your YouTube, your drop-off points. You end up with a clear read on who's listening, what they're staying for, and where they leave.</p>
+        </div>
+      </div>
+      <div class="beat" data-rise>
+        <div class="beat__num">02</div>
+        <div class="beat__body">
+          <h3 class="h3">You stop waiting for a big rebuild to see movement.</h3>
+          <p>There's almost always a handful of things you can change this month that will move the needle. I find those first, so you get momentum while we work on the bigger stuff.</p>
+        </div>
+      </div>
+      <div class="beat" data-rise>
+        <div class="beat__num">03</div>
+        <div class="beat__body">
+          <h3 class="h3">Somebody's finally watching the horizon for you.</h3>
+          <p>Chart pushes, platform features, awards you qualify for and never submitted, live events, the right industry people to know. That work never makes it to the top of your list because you're busy shipping episodes. It's on the top of mine.</p>
+        </div>
+      </div>
+      <div class="beat" data-rise>
+        <div class="beat__num">04</div>
+        <div class="beat__body">
+          <h3 class="h3">Your show still sounds like your show.</h3>
+          <p>I'm not going to hand you a plan that scrubs off whatever made people love it in the first place. Growth that costs you your voice isn't growth, it's a different show with better numbers.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ======================================================================
+     5. CREDIBILITY — violet full bleed. The heaviest section on the page.
+     ====================================================================== -->
+<section class="section section--tight fill-violet">
+  <div class="container">
+    <p class="eyebrow" data-rise>Proof</p>
+    <h2 class="h2" data-rise>The receipts.</h2>
+
+    <div class="receipts">
+
+      <div class="receipt" data-rise data-verify="F11 · platform + window">
+        <p class="receipt__fig"><span data-count="55" data-suffix="%">55%</span> to <span data-count="85" data-suffix="%">85%</span> completion.</p>
+        <p class="receipt__body"><em>Wild Ideas Worth Living</em> went from roughly 55 to 60 percent completion to around 85 percent over the time I've worked on it. In podcasting, 80 percent and up is exceptional. Getting there was a deliberate goal, not luck.</p>
+      </div>
+
+      <div class="receipt" data-rise data-verify="F7 · conflicting figure">
+        <p class="receipt__fig">29,000 to 50,000 listens in about 90 days.</p>
+        <p class="receipt__body">That's <em>Thrifty Traveler</em>, after we put a real growth plan in place. It's held that level since and it's still climbing.</p>
+      </div>
+
+      <div class="receipt" data-rise data-verify="F11 · platform + window">
+        <p class="receipt__fig">An 80 percent plus consumption rate on <em>Thrifty Traveler</em>.</p>
+        <p class="receipt__body">People don't just press play. They stay.</p>
+      </div>
+
+      <div class="receipt" data-rise>
+        <p class="receipt__fig">Almost 300 tickets sold at their first live show.</p>
+        <p class="receipt__body">It brought in sponsors and local press, and the company has kept investing in live events since. A second one happened alongside TEDx in Fargo.</p>
+      </div>
+
+      <div class="receipt" data-rise data-verify="F9 · no country, category or date">
+        <p class="receipt__fig">Top 10 travel podcasts on Apple Podcasts.</p>
+      </div>
+
+      <div class="receipt" data-rise data-verify="F10 · show figure, not hers">
+        <p class="receipt__fig">Over 6 million downloads</p>
+        <p class="receipt__body">for <em>Wild Ideas Worth Living</em>.</p>
+      </div>
+
+      <div class="receipt receipt--wide" data-rise data-verify="F8 · show, year, category, placement">
+        <p class="receipt__fig">A Shorty Award that nobody would have won, because nobody would have entered.</p>
+        <p class="receipt__body">I spotted the category, ran the submission, and the show won it.</p>
+      </div>
+
+    </div>
+
+    <div class="credmeta">
+      <div data-rise data-verify="F3/F4 · REI naming + Puddle relationship">
+        <p class="eyebrow">Shows I produce</p>
+        <ul>
+          <li>REI Co-op, <em>Wild Ideas Worth Living</em></li>
+          <li><em>Thrifty Traveler</em></li>
+        </ul>
+      </div>
+
+      <div data-rise data-verify="F8 · verify each citation">
+        <p class="eyebrow">Awards for <em>Wild Ideas Worth Living</em></p>
+        <ul>
+          <li>2024 W3 Awards, Best in Show, Lifestyle</li>
+          <li>2024 W3 Awards, two Silver Awards, Lifestyle and Sports</li>
+          <li>2022 Signal Awards, Silver, Best Branded Podcast</li>
+          <li>2025 Shorty Awards, finalist in two categories, Bronze for Branded Podcast</li>
+        </ul>
+        <img class="badge" src="images/w3-winner-badge.jpg" alt="W3 Awards winner badge">
+      </div>
+
+      <div data-rise>
+        <p class="eyebrow">Background</p>
+        <p>Working in audio professionally since 2015. Graduate certificate in documentary studies from the Salt Institute for Documentary Studies. Thomas J. Watson Fellow, 2014 to 2015.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ======================================================================
+     6. MID-PAGE CTA
+     ====================================================================== -->
+<section class="section section--tight">
+  <div class="container midcta">
+    <h2 class="h2" data-rise>If you've been thinking about your own show this whole time, that's usually the sign.</h2>
+    <p class="lead" data-rise>Twenty minutes. You tell me what's going on with the show and what's been bugging you about it. I'll tell you honestly whether I think I can help, and if I can't, I'll say so.</p>
+    <div class="cta-gap" data-rise>
+      <a class="btn btn--primary" href="#contact">Book the intro call</a>
+      <p class="small">I read and answer every message myself. It comes straight to me, not to an inbox nobody checks. Or <a class="link" href="https://www.linkedin.com/in/sylvia-nopar-thomas/" target="_blank" rel="noopener">message me on LinkedIn</a>.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ======================================================================
+     7. WHAT YOU CAN BOOK
+     ====================================================================== -->
+<section class="section">
+  <div class="container">
+    <p class="eyebrow" data-rise>What you can book</p>
+    <h2 class="h2 measure-h2" data-rise>It almost always starts with an audit.</h2>
+    <p class="lead measure" data-rise>Every engagement is scoped to what the show actually needs. The first move is finding out where you stand, whether that becomes a long relationship or stays a one-time project.</p>
+
+    <div class="book">
+      <div class="card" data-rise>
+        <p class="eyebrow card__label">One-time</p>
+        <h3 class="h3">Start here</h3>
+        <ul>
+          <li>A one-off podcast consulting session</li>
+          <li>A comprehensive podcast audit</li>
+          <li>An audit plus a strategic meeting on the findings</li>
+        </ul>
+      </div>
+      <div class="card" data-rise>
+        <p class="eyebrow card__label">Packaged</p>
+        <h3 class="h3">A run of sessions</h3>
+        <ul>
+          <li>A consulting package, roughly five to ten sessions depending on the engagement</li>
+        </ul>
+      </div>
+      <div class="card" data-rise>
+        <p class="eyebrow card__label">Ongoing</p>
+        <h3 class="h3">In it with you</h3>
+        <ul>
+          <li>Quarterly consulting after an audit</li>
+          <li>Ongoing podcast strategy</li>
+          <li>Ongoing podcast production</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="book-note" data-rise>
+      <p><strong>What an audit actually covers.</strong> Close listening to episodes. Your show across every platform. Backend metrics, YouTube metrics, average view duration, consumption and completion rates. Which episodes performed and which didn't, and the patterns underneath that in topic, format, storytelling, titles and presentation. Who your audience actually is. Then the low-hanging fruit you can change quickly, and a larger organic growth strategy once those are handled.</p>
+      <p class="small">Pricing is a conversation, once I understand the show and the scope. It depends too much on what you need for a number here to mean anything.</p>
+    </div>
+  </div>
+</section>
+
+<!-- ======================================================================
+     8. ABOUT
+     ====================================================================== -->
+<section class="section">
+  <div class="container about">
+    <div data-rise>
+      <div class="about__photo">
+        <img src="images/sylvia-portrait-betholson.jpg" alt="Sylvia Nopar Thomas, seated at a wooden table against a white brick wall" width="800" height="1200">
+      </div>
+      <p class="small about__credit">Photograph by Beth Olson Creative</p>
+    </div>
+
+    <div class="about__body" data-rise>
+      <p class="eyebrow">About</p>
+      <h2 class="h2">Sylvia Nopar Thomas</h2>
+      <div class="prose" style="margin-top:var(--s24)">
+        <p>Podcast producer, strategist and growth consultant, based in Minneapolis.</p>
+        <p data-verify="F3/F4 · REI naming + Puddle relationship">I produce REI Co-op's <em>Wild Ideas Worth Living</em> end to end: researching and pitching guests, running pre-interviews, sitting in on the interview and asking the follow-ups, going through the tape to find the story, writing scripts for the ear, working through rounds of editorial feedback, then building the episode with music and sound design.</p>
+        <p>On <em>Thrifty Traveler</em> I'm at the recordings, I handle mixing and production edits, and I run growth and strategy: reviewing performance, and looking for the larger industry opportunities the team doesn't have time to chase.</p>
+        <p>My specialty is organic growth. In order to make your show grow, you have to have a good product, so I do the best I can to make the product as sharp as it can be.</p>
+        <p>Graduate certificate in documentary studies from the Salt Institute for Documentary Studies. Thomas J. Watson Fellow, 2014 to 2015.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ======================================================================
+     9. OBJECTION HANDLING — peach full bleed
+     ====================================================================== -->
+<section class="section fill-peach">
+  <div class="container">
+    <p class="eyebrow" data-rise>Before you ask</p>
+    <h2 class="h2" data-rise>Fair questions.</h2>
+
+    <div class="objections">
+      <div class="obj" data-rise>
+        <div class="obj__q" aria-hidden="true">?</div>
+        <div>
+          <h3 class="h3">"You're freelance. What if I need you and you're deep in someone else's show?"</h3>
+          <p>I'm not full time and I won't pretend otherwise. I'm not the person sitting on Slack all day waiting for a ping. What I am is the person who's thought about your show before your meeting starts, who knows what your numbers did last month, and who's been doing this long enough to know which problems need a fast answer and which ones need a good one. If you need somebody at a desk from nine to five, hire that person. That's a real job and it isn't this one.</p>
+        </div>
+      </div>
+
+      <div class="obj" data-rise>
+        <div class="obj__q" aria-hidden="true">?</div>
+        <div>
+          <h3 class="h3">"An editor costs less. What am I actually getting for the difference?"</h3>
+          <p>An editor makes the episode you asked for. That's a genuine skill and you should have one. But an editor isn't going to tell you your third act is where everyone's leaving, or that the format you've used for two years is why your best guest underperformed, or that there's an award category you'd win if somebody filled out the form. I'm in the tape and in the strategy at the same time, and the reason that matters is that the two things are the same problem. You can't grow a show that isn't good, and you can't tell if it's good without listening properly.</p>
+        </div>
+      </div>
+
+      <div class="obj" data-rise>
+        <div class="obj__q" aria-hidden="true">?</div>
+        <div>
+          <h3 class="h3">"We've spent years building this. What if you come in and change everything?"</h3>
+          <p>I'm not going to. I start by listening to what you've already made, and I find what's working before I say a word about what isn't. Most of what I find first is small, quick, and doesn't touch the soul of the show at all. The bigger swings come later, and you're in every one of those conversations. I'm not interested in handing you somebody else's playbook. I've seen what happens when a show gets optimized into something its listeners don't recognize, and I'd rather grow slower than do that to you.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ======================================================================
+     10. FINAL CTA
+     ====================================================================== -->
+<section class="section section--final" id="contact">
+  <div class="container final">
+
+    <div class="final__copy">
+      <h2 class="h-hero" data-rise>Start with a conversation. That's it.</h2>
+      <div class="prose measure" data-rise style="margin-top:var(--s32)">
+        <p class="lead" style="color:var(--ink)">Twenty to thirty minutes, free, and you don't have to prepare anything.</p>
+        <p>You tell me about the show, what you've tried, and what's been nagging at you. I'll ask about your numbers and how you work. By the end of it you'll know whether I'm the right person for this, and so will I.</p>
+        <p>It isn't a free strategy session and I'm not going to sit there rattling off fixes I haven't earned yet. I'd need to actually listen to your show and get into your back end before I told you what to do, and that's the step after this one.</p>
+        <p>You're not signing anything. You're not committing to a project. You're spending twenty minutes finding out whether the show you've built has more room in it than you think.</p>
+      </div>
+      <div class="cta-gap final__actions" data-rise>
+        <a class="btn btn--primary" href="#contact-form">Book the intro call</a>
+        <a class="btn btn--outline" href="https://www.linkedin.com/in/sylvia-nopar-thomas/" target="_blank" rel="noopener">Or message me on LinkedIn</a>
+      </div>
+      <p class="small" style="margin-top:var(--s16)" data-rise>Every message comes to me and I answer it myself.</p>
+    </div>
+
+    <!--
+      TODO F20 — form has no handler yet. action="" is a deliberate placeholder.
+      Submissions must route to Sylvia's inbox (address must NOT be rendered on
+      the page). Needs a Cloudflare Pages Function / Formspree endpoint and a
+      domain before launch.
+    -->
+    <form class="form" id="contact-form" data-rise action="" method="post" data-verify="F20 · no form handler yet">
+      <h3 class="h3">Tell me about the show</h3>
+      <p class="small" style="margin-top:var(--s8)">This comes straight to me. I read every one and I write back myself.</p>
+
+      <div class="form__row">
+        <label for="f-name">Your name</label>
+        <input id="f-name" name="name" type="text" autocomplete="name" required>
+      </div>
+      <div class="form__row">
+        <label for="f-email">Email</label>
+        <input id="f-email" name="email" type="email" autocomplete="email" required>
+      </div>
+      <div class="form__row">
+        <label for="f-show">Podcast name or link</label>
+        <input id="f-show" name="show" type="text">
+      </div>
+      <div class="form__row">
+        <label for="f-message">What's going on with it</label>
+        <textarea id="f-message" name="message" required></textarea>
+      </div>
+
+      <button class="btn btn--primary" type="submit">Send me a message</button>
+      <p class="small form__note">No newsletter, no sequence. Just a reply.</p>
+      <p class="form__status" id="form-status" role="status" hidden></p>
+    </form>
+
+  </div>
+</section>
+
+</main>
+
+<!-- ======================================================================
+     11. FOOTER
+     ====================================================================== -->
+<footer class="footer">
+  <div class="container footer__inner">
+    <div>
+      <p class="footer__name">Sylvia Nopar Thomas</p>
+      <p class="footer__desc">Podcast producer, strategist and growth consultant. Minneapolis.</p>
+    </div>
+    <div>
+      <a href="https://www.linkedin.com/in/sylvia-nopar-thomas/" target="_blank" rel="noopener">LinkedIn</a>
+      <p class="footer__meta">&copy; <span id="year">2026</span> Sylvia Nopar Thomas</p>
+    </div>
+  </div>
+</footer>
+
+<script>
+(function () {
+  'use strict';
+
+  var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* --- footer year ------------------------------------------------------ */
+  document.getElementById('year').textContent = new Date().getFullYear();
+
+  /* --- rise-in ---------------------------------------------------------- */
+  var risers = document.querySelectorAll('[data-rise]');
+
+  if (!('IntersectionObserver' in window)) {
+    risers.forEach(function (el) { el.classList.add('is-in'); });
+  } else {
+    var riseObserver = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (!entry.isIntersecting) return;
+        var el = entry.target;
+        // 60ms stagger between siblings that share a parent
+        var siblings = Array.prototype.filter.call(
+          el.parentNode.children,
+          function (n) { return n.hasAttribute && n.hasAttribute('data-rise'); }
+        );
+        var i = siblings.indexOf(el);
+        el.style.transitionDelay = (i > 0 ? i * 60 : 0) + 'ms';
+        el.classList.add('is-in');
+        riseObserver.unobserve(el); // runs once, never on re-scroll
+      });
+    }, { threshold: 0.15 });
+
+    risers.forEach(function (el) { riseObserver.observe(el); });
+  }
+
+  /* --- count-up --------------------------------------------------------- */
+  var counters = document.querySelectorAll('[data-count]');
+
+  counters.forEach(function (el) {
+    // Reserve the layout width so nothing shifts when the value animates.
+    el.style.display = 'inline-block';
+    el.style.minWidth = el.textContent.trim().length + 'ch';
+  });
+
+  function countUp(el) {
+    var target = parseFloat(el.getAttribute('data-count'));
+    var suffix = el.getAttribute('data-suffix') || '';
+    if (reduced) { el.textContent = target + suffix; return; }
+
+    var duration = 1200;
+    var start = null;
+
+    function step(ts) {
+      if (start === null) start = ts;
+      var p = Math.min((ts - start) / duration, 1);
+      var eased = 1 - Math.pow(1 - p, 3); // ease-out cubic
+      el.textContent = Math.round(target * eased) + suffix;
+      if (p < 1) requestAnimationFrame(step);
+    }
+
+    el.textContent = '0' + suffix;
+    requestAnimationFrame(step);
+  }
+
+  if ('IntersectionObserver' in window) {
+    var countObserver = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (!entry.isIntersecting) return;
+        countUp(entry.target);
+        countObserver.unobserve(entry.target); // first view only
+      });
+    }, { threshold: 0.5 });
+
+    counters.forEach(function (el) { countObserver.observe(el); });
+  }
+
+  /* --- wave-idle pauses when off-screen --------------------------------- */
+  var wave = document.querySelector('.wave');
+  if (wave && 'IntersectionObserver' in window) {
+    new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        wave.classList.toggle('is-paused', !entry.isIntersecting);
+      });
+    }, { threshold: 0 }).observe(wave);
+  }
+
+  /* --- contact form ------------------------------------------------------
+     No endpoint is wired yet (see TODO F20). Until one exists, the form must
+     not silently swallow a submission — it says so plainly and points at the
+     working channel instead.
+     -------------------------------------------------------------------- */
+  var form = document.getElementById('contact-form');
+  var status = document.getElementById('form-status');
+
+  form.addEventListener('submit', function (e) {
+    if (!form.getAttribute('action')) {
+      e.preventDefault();
+      status.hidden = false;
+      status.innerHTML = 'This form is not connected yet. Until it is, reach Sylvia on ' +
+        '<a class="link" href="https://www.linkedin.com/in/sylvia-nopar-thomas/" target="_blank" rel="noopener">LinkedIn</a>.';
+    }
+  });
+
+  /* --- audit mode: ?audit ------------------------------------------------ */
+  if (/(\?|&)audit\b/.test(window.location.search)) {
+    document.body.classList.add('audit');
+    var flagged = document.querySelectorAll('[data-verify]');
+    console.group('UNVERIFIED CLAIMS — ' + flagged.length + ' on this page');
+    flagged.forEach(function (el) {
+      console.log(el.getAttribute('data-verify'), '→', el.textContent.trim().slice(0, 90));
+    });
+    console.groupEnd();
+  }
+})();
+</script>
+
+</body>
+</html>
